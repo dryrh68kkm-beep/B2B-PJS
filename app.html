@@ -1,0 +1,1728 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>ระบบ B2B / PJS — Big C Sainoi</title>
+<style>
+
+  :root{
+    --green-deep:#0B5D3B;
+    --green:#12804F;
+    --green-soft:#E4F3EC;
+    --red:#C8272A;
+    --cream:#FAF8F4;
+    --ink:#1B211D;
+    --muted:#6B756E;
+    --line-dot:#C9CFC9;
+    --card:#FFFFFF;
+    --amber:#B8790A;
+    --amber-soft:#FBF0DB;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:"Tahoma","Noto Sans Thai","Segoe UI",system-ui,sans-serif;
+    padding-bottom:96px;
+    -webkit-font-smoothing:antialiased;
+  }
+  header{
+    background:linear-gradient(135deg,var(--green-deep),var(--green));
+    color:#fff;
+    padding:24px 18px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  header::after{
+    content:"";
+    position:absolute;
+    right:-30px; top:-30px;
+    width:140px;height:140px;
+    border:2px solid rgba(255,255,255,0.15);
+    border-radius:50%;
+  }
+  header .eyebrow{
+    font-size:11.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    opacity:.85;
+    margin:0 0 5px;
+    font-weight:600;
+  }
+  header h1{
+    margin:0;
+    font-size:23px;
+    font-weight:800;
+    letter-spacing:-.01em;
+  }
+  header .sub{
+    margin:5px 0 0;
+    font-size:13px;
+    opacity:.85;
+  }
+
+  .wrap{max-width:520px;margin:0 auto;padding:16px;}
+
+  .card{
+    background:var(--card);
+    border-radius:16px;
+    padding:17px;
+    margin-bottom:14px;
+    box-shadow:0 1px 2px rgba(11,93,59,0.06), 0 4px 14px rgba(11,93,59,0.05);
+    border:1px solid rgba(11,93,59,0.06);
+  }
+
+  .field-row{display:flex;gap:10px;margin-bottom:10px;}
+  .field-row:last-child{margin-bottom:0;}
+  .field{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0;}
+  label{font-size:12px;color:var(--muted);font-weight:600;}
+  input[type=text], input[type=date], input[type=number], select{
+    border:1px solid #DADFDA;
+    border-radius:9px;
+    padding:10px 11px;
+    font-size:14.5px;
+    font-family:inherit;
+    background:#fff;
+    color:var(--ink);
+    width:100%;
+  }
+  input:focus, select:focus{outline:2px solid var(--green);outline-offset:1px;}
+
+  .type-toggle{display:flex;gap:8px;}
+  .type-btn{
+    flex:1;
+    padding:12px 8px;
+    border-radius:10px;
+    border:1.5px solid #DADFDA;
+    background:#fff;
+    font-size:14.5px;
+    font-weight:700;
+    color:var(--muted);
+    cursor:pointer;
+    font-family:inherit;
+  }
+  .type-btn.active{
+    border-color:var(--green);
+    background:var(--green-soft);
+    color:var(--green-deep);
+  }
+
+  .section-title{
+    font-size:13px;
+    font-weight:700;
+    color:var(--green-deep);
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    margin:2px 0 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .toggle-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:4px;
+  }
+  .switch{
+    position:relative;
+    width:44px;height:25px;
+    flex-shrink:0;
+  }
+  .switch input{opacity:0;width:0;height:0;}
+  .slider{
+    position:absolute;cursor:pointer;inset:0;
+    background:#D8DED9;border-radius:999px;
+    transition:.15s;
+  }
+  .slider::before{
+    content:"";position:absolute;
+    height:19px;width:19px;left:3px;top:3px;
+    background:#fff;border-radius:50%;
+    transition:.15s;
+    box-shadow:0 1px 2px rgba(0,0,0,0.2);
+  }
+  .switch input:checked + .slider{background:var(--green);}
+  .switch input:checked + .slider::before{transform:translateX(19px);}
+
+  .item{
+    padding:13px;
+    border-radius:12px;
+    background:#FBFCFB;
+    border:1px solid #E7EBE8;
+    margin-bottom:10px;
+  }
+  .item-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:9px;
+  }
+  .item-num{
+    font-size:12px;
+    font-weight:700;
+    color:var(--green-deep);
+    background:var(--green-soft);
+    border-radius:6px;
+    padding:3px 8px;
+  }
+  .remove-btn{
+    border:none;background:none;color:#B7BDB7;
+    font-size:17px;line-height:1;padding:2px 6px;cursor:pointer;
+    flex-shrink:0;
+  }
+  .remove-btn:hover{color:var(--red);}
+
+  .add-item-btn{
+    width:100%;
+    padding:11px;
+    border-radius:10px;
+    border:1.5px dashed #B9C4BC;
+    background:transparent;
+    color:var(--green-deep);
+    font-weight:700;
+    font-size:13.5px;
+    cursor:pointer;
+    font-family:inherit;
+    margin-top:4px;
+  }
+
+  .warn-card{
+    border-color:#F0C48A !important;
+    background:var(--amber-soft) !important;
+  }
+
+  .preview-box{
+    white-space:pre-wrap;
+    font-family:"Consolas","SFMono-Regular",monospace;
+    font-size:12.5px;
+    line-height:1.55;
+    background:#F4F6F4;
+    border-radius:10px;
+    padding:12px;
+    color:#2B332E;
+    border:1px solid #E3E8E3;
+    max-height:280px;
+    overflow-y:auto;
+  }
+
+  .action-bar{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    background:#fff;
+    border-top:1px solid #E3E8E3;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom));
+    display:flex;
+    gap:10px;
+    max-width:520px;
+    margin:0 auto;
+  }
+  .btn{
+    flex:1;
+    padding:13px 10px;
+    border-radius:11px;
+    border:none;
+    font-size:14.5px;
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+  }
+  .btn-copy{background:#EEF1EE;color:var(--ink);}
+  .btn-line{background:var(--green);color:#fff;}
+  .btn-line:active{background:var(--green-deep);}
+
+  .money-summary{
+    display:flex;
+    justify-content:space-between;
+    padding:7px 0;
+    font-size:14px;
+    border-bottom:1px dashed var(--line-dot);
+  }
+  .money-summary:last-child{border-bottom:none;font-weight:700;color:var(--green-deep);font-size:15px;padding-top:10px;}
+
+  .toast{
+    position:fixed;
+    bottom:90px;left:50%;
+    transform:translateX(-50%) translateY(10px);
+    background:var(--ink);
+    color:#fff;
+    padding:9px 16px;
+    border-radius:20px;
+    font-size:13px;
+    opacity:0;
+    transition:opacity .2s, transform .2s;
+    pointer-events:none;
+    white-space:nowrap;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+
+  .receipt-edge{
+    height:12px;
+    background:
+      linear-gradient(135deg, var(--cream) 50%, transparent 50%) 0 0/14px 14px repeat-x,
+      linear-gradient(45deg, var(--cream) 50%, transparent 50%) 0 0/14px 14px repeat-x;
+    margin-top:-1px;
+  }
+
+  .page-nav-wrap{padding:16px 16px 0;max-width:520px;margin:0 auto;}
+  .page-nav{
+    display:flex;
+    gap:3px;
+    background:#EDEFEC;
+    border-radius:12px;
+    padding:3px;
+  }
+  .page-nav-btn{
+    flex:1;
+    padding:10px 6px;
+    border-radius:9px;
+    border:none;
+    background:transparent;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--muted);
+    cursor:pointer;
+    font-family:inherit;
+    transition:background .15s, color .15s, box-shadow .15s;
+  }
+  .page-nav-btn.active{
+    background:#fff;
+    color:var(--green-deep);
+    box-shadow:0 1px 3px rgba(11,93,59,0.16);
+  }
+  .page{display:none;}
+  .page.active{display:block;}
+
+  /* ══════════ ฐานข้อมูล / สถานะการปล่อย (เดิมกระจายอยู่คนละไฟล์) ══════════ */
+  .btn-green{background:var(--green);color:#fff;}
+  .btn-green:active{background:var(--green-deep);}
+  .btn-outline{background:#fff;border:1.5px solid var(--green);color:var(--green-deep);}
+
+  .search-row{display:flex;gap:8px;}
+  .search-row input{flex:1;}
+
+  .meta-row{display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0;}
+  .meta-row span:first-child{color:var(--muted);}
+
+  .item-row{
+    border-radius:12px;
+    background:#FBFCFB;
+    border:1px solid #E7EBE8;
+    padding:12px;
+    margin-bottom:10px;
+  }
+  .item-row.done{background:var(--green-soft);border-color:var(--green);}
+  .item-row.pending{background:var(--amber-soft);border-color:var(--amber);}
+  .item-name{font-weight:700;font-size:14.5px;margin-bottom:8px;}
+  .item-stats{display:flex;gap:10px;font-size:12.5px;color:var(--muted);margin-bottom:8px;flex-wrap:wrap;}
+  .item-stats b{color:var(--ink);}
+  .pickup-input{display:flex;align-items:center;gap:8px;}
+  .pickup-input input{width:90px;}
+  .pickup-input span{font-size:13px;color:var(--muted);}
+  .item-line{font-size:12.5px;color:var(--muted);margin-top:2px;}
+
+  .status-pill{
+    display:inline-block;
+    font-size:11.5px;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:999px;
+  }
+  .status-pill.done{background:var(--green-soft);color:var(--green-deep);}
+  .status-pill.pending, .status-pill.none{background:var(--amber-soft);color:var(--amber);}
+  .status-pill.partial{background:var(--red-soft);color:var(--red);}
+  .status-pill.overdue-pill{background:#3A1414;color:#FF8A80;}
+  .days-hint{font-size:11.5px;color:var(--muted);}
+  .receipt-card.is-overdue{border-color:var(--red);background:var(--red-soft);}
+  .receipt-card.clickable{cursor:pointer;}
+  .receipt-card.clickable:active{background:var(--green-soft);}
+
+  .empty-state{
+    text-align:center;
+    color:var(--muted);
+    font-size:13.5px;
+    padding:20px 10px;
+  }
+
+  .receipt-card{
+    padding:13px;
+    border-radius:13px;
+    background:#FBFCFB;
+    border:1px solid #E7EBE8;
+    margin-bottom:10px;
+    transition:background .15s;
+  }
+  .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+  .receipt-no{font-weight:700;font-size:14.5px;}
+  .cust{font-size:12.5px;color:var(--muted);}
+
+  .tabs{display:flex;gap:3px;margin-bottom:14px;background:#EDEFEC;border-radius:12px;padding:3px;}
+  .tab-btn{
+    flex:1;
+    padding:10px 6px;
+    border-radius:9px;
+    border:none;
+    background:transparent;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--muted);
+    cursor:pointer;
+    font-family:inherit;
+    transition:background .15s, color .15s, box-shadow .15s;
+  }
+  .tab-btn.active{background:#fff;color:var(--green-deep);box-shadow:0 1px 3px rgba(11,93,59,0.16);}
+
+  .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .summary-cell{
+    text-align:center;
+    padding:13px 6px;
+    border-radius:13px;
+    cursor:pointer;
+    border:1.5px solid transparent;
+    transition:transform .1s;
+  }
+  .summary-cell:active{transform:scale(0.97);}
+  .summary-cell .num{font-size:23px;font-weight:800;line-height:1.2;}
+  .summary-cell .lbl{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .summary-cell.done{background:var(--green-soft);}
+  .summary-cell.done .num{color:var(--green-deep);}
+  .summary-cell.none{background:var(--amber-soft);}
+  .summary-cell.none .num{color:var(--amber);}
+  .summary-cell.partial{background:var(--red-soft);}
+  .summary-cell.partial .num{color:var(--red);}
+  .summary-cell.overdue{background:#3A1414;}
+  .summary-cell.overdue .num, .summary-cell.overdue .lbl{color:#FF8A80;}
+  .summary-cell.active{border-color:currentColor;}
+
+  /* ══════════ Desktop / wide-screen layout ══════════ */
+  @media (min-width: 860px){
+    body{padding-bottom:32px;}
+    header{padding:32px 40px 40px;}
+    header h1{font-size:28px;}
+    header .sub{font-size:14.5px;}
+    header .eyebrow{font-size:13px;}
+
+    .page-nav-wrap{max-width:1080px;padding:20px 40px 0;}
+    .page-nav-btn{padding:13px 10px;font-size:14px;}
+
+    .wrap{max-width:1080px;padding:24px 40px;}
+
+    /* การ์ดฟอร์มหลักเรียงเป็น 2 คอลัมน์ */
+    #page-report > .wrap{
+      display:grid;
+      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
+      gap:18px;
+      align-items:start;
+    }
+    #page-report > .wrap > .card{margin-bottom:0;}
+    #page-report > .wrap > .card:has(#itemList),
+    #page-report > .wrap > .card:has(#previewBox){
+      grid-column: 1 / -1;
+    }
+
+    .action-bar{max-width:1080px;padding:14px 40px calc(14px + env(safe-area-inset-bottom));}
+
+    /* รายการต่างๆ ในหน้าฐานข้อมูล/สถานะการปล่อย เรียงเป็นกริดหลายคอลัมน์ */
+    #allList, #pendingList{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap:12px;
+    }
+    #allList .pending-card, #pendingList .pending-card{margin-bottom:0;}
+
+    #listArea{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap:12px;
+    }
+    #listArea .receipt-card{margin-bottom:0;}
+
+    .summary-grid{max-width:820px;grid-template-columns:repeat(4,1fr);}
+
+    #itemList, #backorderList{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap:12px;
+    }
+    #itemList .item, #backorderList .item{margin-bottom:0;}
+
+    .preview-box{max-height:360px;}
+  }
+
+  @media (min-width: 1200px){
+    .wrap, .page-nav-wrap, .action-bar{max-width:1280px;}
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Loss Prevention · Big C Hyper Sainoi</p>
+  <h1>ระบบ B2B / PJS</h1>
+  <p class="sub">กรอกรายงาน · ฐานข้อมูล · สถานะการปล่อย ในที่เดียว</p>
+</header>
+<div class="receipt-edge"></div>
+
+<div class="page-nav-wrap">
+  <div class="page-nav">
+    <button class="page-nav-btn active" id="navReportBtn" onclick="switchPage('report')">กรอกรายงาน</button>
+    <button class="page-nav-btn" id="navReleaseBtn" onclick="switchPage('release')">สถานะการปล่อย</button>
+  </div>
+</div>
+
+<div id="page-report" class="page active">
+<div class="wrap">
+
+  <div class="card">
+    <div class="field">
+      <label>ประเภทรายการ</label>
+      <select id="typeSelect" onchange="switchType(this.value)">
+        <option value="b2b">B2B</option>
+        <option value="pjs">PJS</option>
+      </select>
+    </div>
+    <div class="field" id="b2bModeField" style="margin-top:10px;">
+      <label>รูปแบบ B2B</label>
+      <select id="b2bModeSelect" onchange="switchB2bMode(this.value)">
+        <option value="sale">ขายสินค้า</option>
+        <option value="pickup">ลูกค้ามารับสินค้า</option>
+      </select>
+    </div>
+    <div class="field" id="pjsModeField" style="margin-top:10px;display:none;">
+      <label>รูปแบบ PJS</label>
+      <select id="pjsModeSelect" onchange="switchPjsMode(this.value)">
+        <option value="sale">ขายสินค้า</option>
+        <option value="release">ปล่อยสินค้า</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="field-row">
+      <div class="field">
+        <label>วันที่</label>
+        <input type="date" id="reportDate">
+      </div>
+    </div>
+    <div id="custMemberFields">
+      <div class="field-row">
+        <div class="field">
+          <label>ชื่อลูกค้า</label>
+          <input type="text" id="custName" list="custNameList" placeholder="คุณ ..." oninput="onCustNameInput(this.value)">
+          <datalist id="custNameList"></datalist>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>เลขที่สมาชิก</label>
+          <input type="text" id="memberNo" inputmode="numeric" placeholder="เลขที่สมาชิก" oninput="onMemberNoInput(this.value)">
+        </div>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>เลขที่ใบเสร็จ</label>
+        <input type="text" id="receiptNo" inputmode="numeric" placeholder="เลขที่ใบเสร็จ" oninput="onReceiptNoInputDebounced(this.value)">
+        <p id="receiptLookupStatus" style="font-size:12px;color:var(--muted);margin:4px 0 0;"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="transportCard">
+    <p class="section-title">ข้อมูลรถขนส่ง</p>
+    <div class="field-row">
+      <div class="field">
+        <label>คนขับรถ</label>
+        <input type="text" id="driverName" placeholder="นาย / นาง / นางสาว ...">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>ทะเบียนรถ</label>
+        <input type="text" id="plateNo" placeholder="เช่น 1ฒภ8917">
+      </div>
+      <div class="field">
+        <label>จังหวัด</label>
+        <input type="text" id="plateProvince" placeholder="กรุงเทพมหานคร">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">รายการสินค้า</p>
+    <div id="itemList"></div>
+    <datalist id="productNameList"></datalist>
+    <button class="add-item-btn" onclick="addItem('items')">＋ เพิ่มรายการสินค้า</button>
+  </div>
+
+  <div class="card" id="backorderCard">
+    <div class="toggle-row" id="backorderSwitchUI">
+      <p class="section-title" style="margin:0;">มีสินค้าคงค้าง</p>
+      <label class="switch">
+        <input type="checkbox" id="backorderToggle" onchange="toggleBackorder()">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="field" id="backorderRadioUI" style="display:none;">
+      <label>สถานะสินค้าคงค้าง</label>
+      <div class="type-toggle">
+        <button class="type-btn active" data-bo="no" onclick="setBackorderOn(false)">ไม่มีคงค้าง</button>
+        <button class="type-btn" data-bo="yes" onclick="setBackorderOn(true)">มีคงค้าง</button>
+      </div>
+    </div>
+    <div class="toggle-row" id="backorderAutoUI" style="display:none;">
+      <p class="section-title" style="margin:0;color:var(--green-deep);">✓ คำนวณคงค้างอัตโนมัติจากยอดขาย</p>
+      <button class="btn btn-outline" style="padding:6px 10px;font-size:11.5px;" onclick="clearAutoBackorder()">เลิกอัตโนมัติ</button>
+    </div>
+    <p id="autoBackorderStatus" style="font-size:13px;font-weight:700;margin:8px 0 0;display:none;"></p>
+    <div id="backorderBody" style="display:none;margin-top:10px;">
+      <div id="backorderList"></div>
+      <button class="add-item-btn" onclick="addItem('backorder')">＋ เพิ่มรายการคงค้าง</button>
+    </div>
+  </div>
+
+  <div class="card" id="palletCard">
+    <div class="toggle-row">
+      <p class="section-title" id="palletCardTitle" style="margin:0;">มีการฝาก/รับคืนพาเลท</p>
+      <label class="switch">
+        <input type="checkbox" id="palletToggle" onchange="togglePallet()">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div id="palletBody" style="display:none;margin-top:10px;">
+      <div class="field-row" id="palletDirectionRow">
+        <div class="field">
+          <label>ทิศทาง</label>
+          <select id="palletDirection" onchange="updatePreview()">
+            <option value="deposit">ลูกค้านำมาฝาก</option>
+            <option value="return">รับคืนจากลูกค้า</option>
+            <option value="transport_take">ขนส่งนำไป</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>สีพาเลท</label>
+          <select id="palletColor" onchange="updatePreview()">
+            <option value="แดง">แดง</option>
+            <option value="ฟ้า">ฟ้า</option>
+            <option value="เขียว">เขียว</option>
+            <option value="ดำ">ดำ</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>จำนวน (เลท)</label>
+          <input type="number" inputmode="numeric" id="palletQty" placeholder="0" oninput="updatePreview()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="moneyCard">
+    <p class="section-title">ยอดขาย</p>
+    <div class="field-row">
+      <div class="field">
+        <label id="priceLabel">ราคา (บาท)</label>
+        <input type="number" inputmode="numeric" id="pjsPrice" placeholder="0" oninput="updatePreview()">
+      </div>
+      <div class="field">
+        <label>ส่วนลดรวม (บาท)</label>
+        <input type="number" inputmode="numeric" id="pjsDiscount" placeholder="0" oninput="updatePreview()">
+      </div>
+    </div>
+    <div class="money-summary"><span id="sumPriceLabel">ราคา</span><span id="sumPrice">0 บาท</span></div>
+    <div class="money-summary"><span>ส่วนลดรวม</span><span id="sumDiscount">0 บาท</span></div>
+    <div class="money-summary"><span>รวมเป็นเงินทั้งสิ้น</span><span id="sumTotal">0 บาท</span></div>
+  </div>
+
+  <div class="card">
+    <p class="section-title">ตัวอย่างข้อความ</p>
+    <div class="preview-box" id="previewBox"></div>
+  </div>
+
+  <div class="card" id="dbCard" style="display:none;">
+    <p class="section-title">ฐานข้อมูลใบเสร็จ</p>
+    <p style="font-size:12.5px;color:var(--muted);margin:0 0 10px;">บันทึกทุกใบเสร็จเข้าฐานข้อมูลกลาง ผูกกับเลขที่ใบเสร็จ — แบบรับสินค้า/ปล่อยสินค้าจะติดตามยอดคงค้างได้ ส่วนแบบขายจะบันทึกเป็นข้อมูลอ้างอิง (ถือว่าส่งครบแล้ว)</p>
+    <button class="btn" id="dbSaveBtn" onclick="saveToDatabase()" style="width:100%;background:var(--green-deep);color:#fff;">บันทึกเข้าฐานข้อมูล</button>
+    <p id="dbStatus" style="font-size:12px;color:var(--muted);margin:8px 0 0;"></p>
+  </div>
+
+</div>
+
+<div class="action-bar">
+  <button class="btn btn-copy" onclick="copyText()">คัดลอก</button>
+  <a class="btn btn-line" id="lineBtn" href="#" style="text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;">ส่งเข้า LINE</a>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── Login gate ── -->
+
+</div>
+
+<div id="page-release" class="page">
+<div class="wrap">
+
+  <div class="card">
+    <div class="summary-grid">
+      <div class="summary-cell done active" id="cellDone" onclick="setFilter('done')">
+        <div class="num" id="countDone">-</div>
+        <div class="lbl">ปล่อยแล้ว</div>
+      </div>
+      <div class="summary-cell none" id="cellNone" onclick="setFilter('none')">
+        <div class="num" id="countNone">-</div>
+        <div class="lbl">ยังไม่ปล่อย</div>
+      </div>
+      <div class="summary-cell partial" id="cellPartial" onclick="setFilter('partial')">
+        <div class="num" id="countPartial">-</div>
+        <div class="lbl">ปล่อยไม่ครบ</div>
+      </div>
+      <div class="summary-cell overdue" id="cellOverdue" onclick="setFilter('overdue')">
+        <div class="num" id="countOverdue">-</div>
+        <div class="lbl">⚠️ เกิน 7 วัน</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <button class="btn btn-outline" style="width:100%;" onclick="loadReceipts()">รีเฟรชข้อมูล</button>
+  </div>
+
+  <div id="listArea"></div>
+
+</div>
+
+<!-- ── Login gate ── -->
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ── Login gate ── -->
+<div id="loginOverlay" style="position:fixed;inset:0;background:var(--cream);z-index:999;display:flex;align-items:center;justify-content:center;padding:24px;">
+  <div style="width:100%;max-width:360px;background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(11,93,59,0.12);">
+    <p style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 4px;">Loss Prevention · Big C Sainoi</p>
+    <h2 style="margin:0 0 18px;font-size:19px;color:var(--green-deep);">เข้าสู่ระบบ</h2>
+    <div class="field">
+      <label>อีเมล</label>
+      <input type="text" id="loginEmail" placeholder="อีเมล">
+    </div>
+    <div class="field">
+      <label>รหัสผ่าน</label>
+      <input type="password" id="loginPassword" placeholder="รหัสผ่าน">
+    </div>
+    <button class="btn btn-line" style="width:100%;" onclick="doLogin()">เข้าสู่ระบบ</button>
+    <p id="loginError" style="font-size:12.5px;color:var(--red);margin:10px 0 0;"></p>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDL-wJBqUmLl5abLPX8hUIfsZkrMbPovRA",
+  authDomain: "b2b-pjs.firebaseapp.com",
+  projectId: "b2b-pjs",
+  storageBucket: "b2b-pjs.firebasestorage.app",
+  messagingSenderId: "997047179126",
+  appId: "1:997047179126:web:f378ee051bd4f4c6b54c57"
+};
+
+const fbApp = initializeApp(firebaseConfig);
+const auth = getAuth(fbApp);
+const db = getFirestore(fbApp);
+
+window.doLogin = function(){
+  const email = document.getElementById("loginEmail").value.trim();
+  const pass = document.getElementById("loginPassword").value;
+  const errEl = document.getElementById("loginError");
+  errEl.textContent = "";
+  signInWithEmailAndPassword(auth, email, pass).catch(()=>{
+    errEl.textContent = "เข้าสู่ระบบไม่สำเร็จ ตรวจสอบอีเมล/รหัสผ่านอีกครั้ง";
+  });
+};
+
+function sanitizeReceiptId(receiptNo){
+  return String(receiptNo).trim().replace(/[\/\s]+/g, "_");
+}
+
+window.switchPage = function(page){
+  document.getElementById("navReportBtn").classList.toggle("active", page==="report");
+  document.getElementById("navReleaseBtn").classList.toggle("active", page==="release");
+  document.getElementById("page-report").classList.toggle("active", page==="report");
+  document.getElementById("page-release").classList.toggle("active", page==="release");
+};
+
+onAuthStateChanged(auth, (user)=>{
+  document.getElementById("loginOverlay").style.display = user ? "none" : "flex";
+  if(user){
+    loadCustomerList();
+    loadProductList();
+    loadReceipts();
+  }
+});
+
+// ══════════════════════════ กรอกรายงาน (B2B/PJS) ══════════════════════════
+
+let currentType = "b2b";
+let b2bMode = "sale";
+let pjsMode = "sale";
+let backorderOn = false;
+let items = [];
+let backorderItems = [];
+let seq = 0;
+let lookedUpItemsMap = null; // {name: {orderedQty, deliveredQty, unit}} from a matched sale record
+
+function mode(){
+  return currentType === "b2b" ? ("b2b_" + b2bMode) : ("pjs_" + pjsMode);
+}
+
+function hasBarcode(){
+  return mode() === "pjs_sale";
+}
+
+function isMoneyMode(){
+  return mode() === "pjs_sale" || mode() === "b2b_sale";
+}
+
+function isPickupLikeMode(){
+  return mode() === "b2b_pickup" || mode() === "pjs_release";
+}
+
+function hasCustMember(){
+  return mode() !== "pjs_release";
+}
+
+function newItem(withBarcode){
+  seq++;
+  return { id: "it"+seq, barcode:"", name:"", qty:"", unit: withBarcode ? "ลัง" : (currentType==="b2b" ? "ลัง" : "แพ็ค") };
+}
+
+window.addItem = function(target){
+  const it = newItem(hasBarcode());
+  if(target === "items") items.push(it);
+  else backorderItems.push(it);
+  render();
+}
+
+window.removeItem = function(target, id){
+  if(target === "items") items = items.filter(i=>i.id!==id);
+  else backorderItems = backorderItems.filter(i=>i.id!==id);
+  render();
+}
+
+window.setItemField = function(target, id, field, val){
+  const arr = target === "items" ? items : backorderItems;
+  const it = arr.find(i=>i.id===id);
+  if(it) it[field] = val;
+  if(target === "items" && lookedUpItemsMap && (field === "qty" || field === "name")){
+    recalcAutoBackorder();
+  }
+  updatePreview();
+}
+
+function recalcAutoBackorder(){
+  if(!lookedUpItemsMap) return;
+  const enteredByName = {};
+  items.forEach(it=>{
+    const key = (it.name||"").trim();
+    if(!key) return;
+    enteredByName[key] = (enteredByName[key]||0) + (Number(it.qty)||0);
+  });
+
+  const newBackorder = [];
+  Object.keys(lookedUpItemsMap).forEach(name=>{
+    const base = lookedUpItemsMap[name];
+    const enteredNow = enteredByName[name] || 0;
+    const remaining = Math.max(0, base.orderedQty - base.deliveredQty - enteredNow);
+    if(remaining > 0){
+      const bi = newItem(false);
+      bi.name = name;
+      bi.unit = base.unit || bi.unit;
+      bi.qty = remaining;
+      newBackorder.push(bi);
+    }
+  });
+
+  backorderItems = newBackorder;
+  backorderOn = newBackorder.length > 0;
+  document.getElementById("backorderBody").style.display = backorderOn ? "" : "none";
+
+  const statusEl = document.getElementById("autoBackorderStatus");
+  if(statusEl){
+    statusEl.style.display = "";
+    if(backorderOn){
+      statusEl.textContent = "⚠️ มีคงค้าง";
+      statusEl.style.color = "var(--amber)";
+    } else {
+      statusEl.textContent = "✅ ไม่มีคงค้าง (ปล่อยครบแล้ว)";
+      statusEl.style.color = "var(--green-deep)";
+    }
+  }
+
+  renderBackorderList();
+}
+
+window.clearAutoBackorder = function(){
+  lookedUpItemsMap = null;
+  backorderItems = [];
+  backorderOn = false;
+  document.getElementById("backorderToggle").checked = false;
+  document.getElementById("backorderBody").style.display = "none";
+  const statusEl = document.getElementById("autoBackorderStatus");
+  if(statusEl) statusEl.style.display = "none";
+  applyVisibility();
+  render();
+};
+
+function applyVisibility(){
+  document.getElementById("b2bModeField").style.display = currentType === "b2b" ? "" : "none";
+  document.getElementById("pjsModeField").style.display = currentType === "pjs" ? "" : "none";
+  document.getElementById("custMemberFields").style.display = hasCustMember() ? "" : "none";
+  document.getElementById("transportCard").style.display = mode() === "b2b_pickup" ? "" : "none";
+  document.getElementById("backorderCard").style.display = isPickupLikeMode() ? "" : "none";
+  document.getElementById("palletCard").style.display = isPickupLikeMode() ? "" : "none";
+  document.getElementById("moneyCard").style.display = isMoneyMode() ? "" : "none";
+  document.getElementById("dbCard").style.display = "";
+
+  // backorder control style: switch for b2b_pickup (optional), radio for pjs_release (mandatory choice),
+  // or auto-calculated display if a prior sale record was matched via receipt lookup
+  const isRelease = mode() === "pjs_release";
+  const isAuto = isPickupLikeMode() && lookedUpItemsMap !== null;
+  document.getElementById("backorderSwitchUI").style.display = (!isAuto && !isRelease) ? "" : "none";
+  document.getElementById("backorderRadioUI").style.display = (!isAuto && isRelease) ? "" : "none";
+  document.getElementById("backorderAutoUI").style.display = isAuto ? "" : "none";
+
+  // pallet direction row: hidden for pjs_release (direction is fixed), shown for b2b_pickup
+  document.getElementById("palletDirectionRow").style.display = mode() === "b2b_pickup" ? "" : "none";
+  document.getElementById("palletCardTitle").textContent = mode() === "pjs_release" ? "มีการนำพาเลทไป" : "มีการฝาก/รับคืนพาเลท";
+
+  const priceLabel = currentType === "pjs" ? "ราคา (บาท)" : "ยอดเงิน (บาท)";
+  document.getElementById("priceLabel").textContent = priceLabel;
+  document.getElementById("sumPriceLabel").textContent = currentType === "pjs" ? "ราคา" : "ยอดเงิน";
+}
+
+function resetSections(){
+  items = [newItem(hasBarcode())];
+  backorderItems = [];
+  backorderOn = false;
+  lookedUpItemsMap = null;
+  document.getElementById("backorderToggle").checked = false;
+  document.getElementById("backorderBody").style.display = "none";
+  document.querySelectorAll(".type-btn[data-bo]").forEach(b=>{
+    b.classList.toggle("active", b.dataset.bo === "no");
+  });
+  document.getElementById("palletToggle").checked = false;
+  document.getElementById("palletBody").style.display = "none";
+  const statusEl = document.getElementById("receiptLookupStatus");
+  if(statusEl) statusEl.textContent = "";
+  const autoStatusEl = document.getElementById("autoBackorderStatus");
+  if(autoStatusEl) autoStatusEl.style.display = "none";
+  render();
+}
+
+window.switchType = function(type){
+  currentType = type;
+  document.getElementById("typeSelect").value = type;
+  applyVisibility();
+  resetSections();
+}
+
+window.switchB2bMode = function(m){
+  b2bMode = m;
+  document.getElementById("b2bModeSelect").value = m;
+  applyVisibility();
+  resetSections();
+}
+
+window.switchPjsMode = function(m){
+  pjsMode = m;
+  document.getElementById("pjsModeSelect").value = m;
+  applyVisibility();
+  resetSections();
+}
+
+window.toggleBackorder = function(){
+  const on = document.getElementById("backorderToggle").checked;
+  setBackorderOn(on, true);
+}
+
+window.setBackorderOn = function(on, fromSwitch){
+  backorderOn = on;
+  if(!fromSwitch){
+    document.querySelectorAll(".type-btn[data-bo]").forEach(b=>{
+      b.classList.toggle("active", (b.dataset.bo === "yes") === on);
+    });
+  }
+  document.getElementById("backorderBody").style.display = on ? "" : "none";
+  if(on && backorderItems.length === 0){
+    backorderItems.push(newItem(false));
+  }
+  render();
+}
+
+window.togglePallet = function(){
+  const on = document.getElementById("palletToggle").checked;
+  document.getElementById("palletBody").style.display = on ? "" : "none";
+  updatePreview();
+}
+
+function renderBackorderList(){
+  const boList = document.getElementById("backorderList");
+  boList.innerHTML = "";
+  backorderItems.forEach((it,i)=> boList.appendChild(renderItemRow("backorder", it, i)));
+}
+
+function renderItemRow(target, it, index){
+  const withBarcode = hasBarcode();
+  const row = document.createElement("div");
+  row.className = "item";
+  row.innerHTML = `
+    <div class="item-top">
+      <span class="item-num">${index+1}</span>
+      <button class="remove-btn" onclick="removeItem('${target}','${it.id}')" title="ลบรายการนี้">✕</button>
+    </div>
+    ${withBarcode ? `
+    <div class="field-row">
+      <div class="field">
+        <label>Barcode</label>
+        <input type="text" inputmode="numeric" value="${escapeAttr(it.barcode)}" placeholder="เช่น 08850011074291" oninput="setItemField('${target}','${it.id}','barcode',this.value)">
+      </div>
+    </div>` : ``}
+    <div class="field-row">
+      <div class="field">
+        <label>ชื่อสินค้า</label>
+        <input type="text" list="productNameList" value="${escapeAttr(it.name)}" placeholder="ชื่อสินค้า" oninput="setItemField('${target}','${it.id}','name',this.value); onProductNameInput('${target}','${it.id}',this.value)">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>จำนวน</label>
+        <input type="number" inputmode="numeric" value="${escapeAttr(it.qty)}" placeholder="0" oninput="setItemField('${target}','${it.id}','qty',this.value)">
+      </div>
+      <div class="field">
+        <label>หน่วย</label>
+        <input type="text" id="unit_${it.id}" value="${escapeAttr(it.unit)}" placeholder="แพ็ค / ลัง" oninput="setItemField('${target}','${it.id}','unit',this.value)">
+      </div>
+    </div>
+  `;
+  return row;
+}
+
+function render(){
+  const list = document.getElementById("itemList");
+  list.innerHTML = "";
+  items.forEach((it,i)=> list.appendChild(renderItemRow("items", it, i)));
+
+  renderBackorderList();
+  updatePreview();
+}
+
+function escapeAttr(s){
+  return String(s==null?"":s).replace(/&/g,"&amp;").replace(/"/g,"&quot;");
+}
+
+function buddhistDate(dateStr){
+  if(!dateStr) return "-";
+  const d = new Date(dateStr + "T00:00:00");
+  const day = String(d.getDate()).padStart(2,"0");
+  const month = String(d.getMonth()+1).padStart(2,"0");
+  const year = (d.getFullYear() + 543) % 100;
+  return `${day}/${month}/${String(year).padStart(2,"0")}`;
+}
+
+function fmtMoney(n){
+  const num = Number(n) || 0;
+  return num.toLocaleString("en-US") + " บาท";
+}
+
+function buildItemBlock(arr){
+  let lines = [];
+  arr.forEach((it,i)=>{
+    if(hasBarcode()){
+      lines.push(`${i+1}. Barcode. ${it.barcode || "-"}`);
+      lines.push(`${it.name || "-"}`);
+      lines.push("");
+      lines.push(`จำนวน ${it.qty || "0"} ${it.unit || "ลัง"}`);
+    } else {
+      lines.push(`${i+1}. ${it.name || "-"}`);
+      lines.push(`จำนวน ${it.qty || "0"} ${it.unit || "แพ็ค"}`);
+    }
+    lines.push("•".repeat(29));
+  });
+  return lines;
+}
+
+function buildReleaseItemBlock(arr){
+  let lines = [];
+  arr.forEach((it,i)=>{
+    if(i > 0) lines.push("");
+    lines.push(`${it.name || "-"}`);
+    lines.push(`จำนวน ${it.qty || "0"} ${it.unit || "ลัง"}`);
+  });
+  return lines;
+}
+
+function buildText(){
+  const dateText = buddhistDate(document.getElementById("reportDate").value);
+  const custName = document.getElementById("custName").value.trim() || "-";
+  const memberNo = document.getElementById("memberNo").value.trim() || "-";
+  const receiptNo = document.getElementById("receiptNo").value.trim() || "-";
+  const m = mode();
+
+  let lines = [];
+  lines.push(`วันที่ ${dateText}`);
+  lines.push("");
+
+  if(m === "b2b_pickup"){
+    lines.push("ลูกค้ามารับสินค้า B2B.");
+    lines.push("");
+    lines.push(`ชื่อลูกค้า: ${custName}`);
+    lines.push(`เลขที่สมาชิก: ${memberNo}`);
+    lines.push(`เลขที่ใบเสร็จ: ${receiptNo}`);
+    lines.push(`คนขับรถ: ${document.getElementById("driverName").value.trim() || "-"}`);
+    const plate = document.getElementById("plateNo").value.trim();
+    const province = document.getElementById("plateProvince").value.trim();
+    lines.push(`ทะเบียนรถ: ${plate || "-"}${province ? " " + province : ""}`);
+    lines.push("");
+    lines.push(`${items.length} รายการ ดังนี้`);
+    lines.push("");
+    lines.push(...buildItemBlock(items));
+
+    if(backorderOn && backorderItems.length){
+      lines.push("");
+      lines.push("‼️มีสินค้าคงค้าง‼️");
+      lines.push("");
+      lines.push(...buildItemBlock(backorderItems));
+    } else if(lookedUpItemsMap){
+      lines.push("");
+      lines.push("ไม่มีสินค้าคงค้าง");
+    }
+
+    if(document.getElementById("palletToggle").checked){
+      const dir = document.getElementById("palletDirection").value;
+      const color = document.getElementById("palletColor").value;
+      const qty = document.getElementById("palletQty").value || "0";
+      lines.push("");
+      if(dir === "deposit"){
+        lines.push(`ลูกค้านำพาเลท${color}มาฝาก`);
+      } else if(dir === "return"){
+        lines.push(`ลูกค้ารับพาเลท${color}คืน`);
+      } else {
+        lines.push(`ขนส่งนำพาเลท${color}ไป`);
+      }
+      lines.push(`จำนวน${qty} เลท`);
+    }
+  } else if(m === "b2b_sale"){
+    lines.push("ขายสินค้า B2B.");
+    lines.push("");
+    lines.push(`ชื่อลูกค้า: ${custName}`);
+    lines.push(`เลขที่สมาชิก: ${memberNo}`);
+    lines.push(`เลขที่ใบเสร็จ: ${receiptNo}`);
+    lines.push("");
+    lines.push(`${items.length} รายการ ดังนี้`);
+    lines.push("");
+    lines.push(...buildItemBlock(items));
+
+    const price = Number(document.getElementById("pjsPrice").value) || 0;
+    const discount = Number(document.getElementById("pjsDiscount").value) || 0;
+    const total = price - discount;
+    lines.push(`ยอดเงิน ${fmtMoney(price)}`);
+    lines.push(`ส่วนลดรวม ${discount > 0 ? fmtMoney(discount) : "- บาท"}`);
+    lines.push("");
+    lines.push(`รวมเป็นเงินทั้งสิ้น ${fmtMoney(total)}`);
+  } else if(m === "pjs_sale"){
+    lines.push("ขายสินค้า PJS.");
+    lines.push("");
+    lines.push(`ชื่อลูกค้า: ${custName}`);
+    lines.push(`เลขที่สมาชิก: ${memberNo}`);
+    lines.push(`เลขที่ใบเสร็จ: ${receiptNo}`);
+    lines.push("");
+    lines.push(`${items.length} รายการ ดังนี้`);
+    lines.push("");
+    lines.push(...buildItemBlock(items));
+
+    const price = Number(document.getElementById("pjsPrice").value) || 0;
+    const discount = Number(document.getElementById("pjsDiscount").value) || 0;
+    const total = price - discount;
+    lines.push("");
+    lines.push(`ราคา ${fmtMoney(price)}`);
+    lines.push(`ส่วนลดรวม ${fmtMoney(discount)}`);
+    lines.push(`รวมเป็นเงินทั้งสิ้น ${fmtMoney(total)}`);
+  } else {
+    // pjs_release
+    lines.push("ปล่อยสินค้า PJS.");
+    lines.push("");
+    lines.push(`เลขที่ใบเสร็จ: ${receiptNo}`);
+    lines.push("");
+    lines.push(...buildReleaseItemBlock(items));
+    lines.push("");
+    lines.push(backorderOn && backorderItems.length ? "มีคงค้าง" : "ไม่มีคงค้าง");
+    if(backorderOn && backorderItems.length){
+      lines.push("");
+      lines.push(...buildReleaseItemBlock(backorderItems));
+    }
+
+    if(document.getElementById("palletToggle").checked){
+      const color = document.getElementById("palletColor").value;
+      const qty = document.getElementById("palletQty").value || "0";
+      lines.push("");
+      lines.push(`ขนส่งนำพาเลท${color}ไป ${qty} เลท`);
+    }
+  }
+
+  return lines.join("\n");
+}
+
+window.updatePreview = function(){
+  document.getElementById("previewBox").textContent = buildText();
+  const url = "https://line.me/R/msg/text/?" + encodeURIComponent(buildText());
+  document.getElementById("lineBtn").setAttribute("href", url);
+
+  if(isMoneyMode()){
+    const price = Number(document.getElementById("pjsPrice").value) || 0;
+    const discount = Number(document.getElementById("pjsDiscount").value) || 0;
+    document.getElementById("sumPrice").textContent = fmtMoney(price);
+    document.getElementById("sumDiscount").textContent = fmtMoney(discount);
+    document.getElementById("sumTotal").textContent = fmtMoney(price - discount);
+  }
+}
+
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 1800);
+}
+
+window.copyText = function(){
+  const text = buildText();
+  navigator.clipboard.writeText(text).then(()=>{
+    showToast("คัดลอกข้อความแล้ว");
+  }).catch(()=>{
+    showToast("คัดลอกไม่สำเร็จ ลองแตะค้างที่กล่องข้อความแทน");
+  });
+}
+
+// init
+document.getElementById("reportDate").valueAsDate = new Date();
+["reportDate","custName","memberNo","receiptNo","driverName","plateNo","plateProvince"].forEach(id=>{
+  document.getElementById(id).addEventListener("input", updatePreview);
+});
+applyVisibility();
+items = [newItem(hasBarcode())];
+render();
+
+
+let customerList = []; // [{name, memberNo}]
+
+async function loadCustomerList(){
+  try{
+    const snap = await getDocs(collection(db, "customers"));
+    customerList = [];
+    snap.forEach(docSnap=>{
+      const d = docSnap.data();
+      if(d.custName) customerList.push({ name: d.custName, memberNo: d.memberNo || "" });
+    });
+    const listEl = document.getElementById("custNameList");
+    listEl.innerHTML = customerList.map(c=>`<option value="${c.name.replace(/"/g,'&quot;')}">`).join("");
+  } catch(err){
+    // เงียบไว้ ไม่รบกวนการใช้งานหลักถ้าโหลดรายชื่อไม่สำเร็จ
+  }
+}
+
+let productList = []; // [{name, unit}]
+
+async function loadProductList(){
+  try{
+    const snap = await getDocs(collection(db, "products"));
+    productList = [];
+    snap.forEach(docSnap=>{
+      const d = docSnap.data();
+      if(d.name) productList.push({ name: d.name, unit: d.unit || "" });
+    });
+    const listEl = document.getElementById("productNameList");
+    if(listEl){
+      listEl.innerHTML = productList.map(p=>`<option value="${p.name.replace(/"/g,'&quot;')}">`).join("");
+    }
+  } catch(err){
+    // เงียบไว้ ไม่รบกวนการใช้งานหลักถ้าโหลดรายชื่อสินค้าไม่สำเร็จ
+  }
+}
+
+window.onProductNameInput = function(target, itemId, val){
+  const trimmed = val.trim();
+  const match = productList.find(p => p.name.trim().toLowerCase() === trimmed.toLowerCase());
+  if(match && match.unit){
+    const unitInput = document.getElementById("unit_" + itemId);
+    if(unitInput){
+      unitInput.value = match.unit;
+      setItemField(target, itemId, "unit", match.unit);
+    }
+  }
+};
+
+async function upsertProduct(name, unit){
+  if(!name || !name.trim()) return;
+  try{
+    const trimmedName = name.trim();
+    await setDoc(doc(db, "products", sanitizeReceiptId(trimmedName)), {
+      name: trimmedName,
+      unit: unit || null,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    const existingIdx = productList.findIndex(p => p.name.trim().toLowerCase() === trimmedName.toLowerCase());
+    if(existingIdx >= 0){
+      productList[existingIdx] = { name: trimmedName, unit };
+    } else {
+      productList.push({ name: trimmedName, unit });
+      const listEl = document.getElementById("productNameList");
+      if(listEl) listEl.innerHTML += `<option value="${trimmedName.replace(/"/g,'&quot;')}">`;
+    }
+  } catch(err){
+    // ไม่ต้อง block การบันทึกหลัก ถ้าอัปเดตฐานข้อมูลสินค้าไม่สำเร็จ
+  }
+}
+
+window.onCustNameInput = function(val){
+  const trimmed = val.trim();
+  const match = customerList.find(c => c.name.trim().toLowerCase() === trimmed.toLowerCase());
+  if(match && match.memberNo){
+    document.getElementById("memberNo").value = match.memberNo;
+  }
+  updatePreview();
+};
+
+window.onMemberNoInput = function(val){
+  const trimmed = val.trim();
+  const match = customerList.find(c => c.memberNo && c.memberNo.trim() === trimmed);
+  if(match){
+    document.getElementById("custName").value = match.name;
+  }
+  updatePreview();
+};
+
+let receiptLookupTimer = null;
+window.onReceiptNoInputDebounced = function(val){
+  updatePreview();
+  const statusEl = document.getElementById("receiptLookupStatus");
+  if(statusEl) statusEl.textContent = "";
+  if(receiptLookupTimer) clearTimeout(receiptLookupTimer);
+  receiptLookupTimer = setTimeout(()=>{
+    onReceiptNoLookup(val);
+  }, 600);
+};
+
+window.onReceiptNoLookup = async function(receiptNo){
+  const trimmed = receiptNo.trim();
+  const statusEl = document.getElementById("receiptLookupStatus");
+  if(!trimmed){ if(statusEl) statusEl.textContent = ""; return; }
+  if(!auth.currentUser) return;
+
+  if(statusEl){
+    statusEl.textContent = "กำลังค้นหาข้อมูลเดิม...";
+    statusEl.style.color = "var(--muted)";
+  }
+
+  try{
+    const snap = await getDoc(doc(db, "receipts", sanitizeReceiptId(trimmed)));
+    if(!snap.exists()){
+      if(statusEl){
+        statusEl.textContent = "ยังไม่เคยมีข้อมูลใบเสร็จนี้ (จะสร้างใหม่)";
+        statusEl.style.color = "var(--muted)";
+      }
+      return;
+    }
+    const d = snap.data();
+
+    if(hasCustMember()){
+      if(d.custName) document.getElementById("custName").value = d.custName;
+      if(d.memberNo) document.getElementById("memberNo").value = d.memberNo;
+    }
+
+    if(isPickupLikeMode() && d.items && d.items.length){
+      // ดึงรายการที่ยังคงค้าง (หรือทั้งหมดถ้าไม่มีข้อมูลคงเหลือ) มาตั้งเป็นรายการให้กรอกจำนวนที่รับ/ปล่อยรอบนี้
+      const pending = d.items.filter(it => (it.remainingQty||0) > 0);
+      const useItems = pending.length ? pending : d.items;
+      items = useItems.map(it=>{
+        const ni = newItem(hasBarcode());
+        ni.name = it.name;
+        ni.unit = it.unit || ni.unit;
+        ni.qty = "";
+        return ni;
+      });
+
+      // ตั้งฐานข้อมูลสั่ง/รับไปแล้วไว้ล่วงหน้า เพื่อคำนวณคงค้างอัตโนมัติทุกครั้งที่แก้จำนวน
+      lookedUpItemsMap = {};
+      useItems.forEach(it=>{
+        lookedUpItemsMap[it.name] = {
+          orderedQty: it.orderedQty || 0,
+          deliveredQty: it.deliveredQty || 0,
+          unit: it.unit || ""
+        };
+      });
+
+      applyVisibility();
+      render();
+      recalcAutoBackorder();
+    }
+
+    updatePreview();
+
+    if(statusEl){
+      const totalRemaining = (d.items||[]).reduce((s,it)=>s+(it.remainingQty||0),0);
+      statusEl.textContent = `พบข้อมูลเดิม: ${d.custName || "-"} · เติมรายการให้แล้ว${totalRemaining>0 ? ` (คงค้างรวม ${totalRemaining})` : ""}`;
+      statusEl.style.color = "var(--green-deep)";
+    }
+  } catch(err){
+    if(statusEl){
+      statusEl.textContent = "ค้นหาไม่สำเร็จ: " + err.message;
+      statusEl.style.color = "var(--red)";
+    }
+  }
+};
+
+async function upsertCustomer(custName, memberNo){
+  if(!custName && !memberNo) return;
+  try{
+    const key = (memberNo || custName).trim();
+    const docId = sanitizeReceiptId(key);
+    await setDoc(doc(db, "customers", docId), {
+      custName: custName || null,
+      memberNo: memberNo || null,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+    // อัปเดตรายชื่อในเครื่องด้วย เผื่อใช้ต่อในฟอร์มเดียวกันโดยไม่ต้องโหลดใหม่
+    const existingIdx = customerList.findIndex(c => (c.memberNo||"") === (memberNo||"") && memberNo);
+    if(existingIdx >= 0){
+      customerList[existingIdx] = { name: custName, memberNo };
+    } else if(custName){
+      customerList.push({ name: custName, memberNo });
+      const listEl = document.getElementById("custNameList");
+      listEl.innerHTML += `<option value="${custName.replace(/"/g,'&quot;')}">`;
+    }
+  } catch(err){
+    // ไม่ต้อง block การบันทึกหลัก ถ้าอัปเดตฐานข้อมูลลูกค้าไม่สำเร็จ
+  }
+}
+
+window.saveToDatabase = async function(){
+  const btn = document.getElementById("dbSaveBtn");
+  const statusEl = document.getElementById("dbStatus");
+  const receiptNo = document.getElementById("receiptNo").value.trim();
+
+  if(!receiptNo){
+    statusEl.textContent = "กรอกเลขที่ใบเสร็จก่อนบันทึก";
+    statusEl.style.color = "var(--red)";
+    return;
+  }
+  if(!auth.currentUser){
+    statusEl.textContent = "ยังไม่ได้เข้าสู่ระบบ";
+    statusEl.style.color = "var(--red)";
+    return;
+  }
+
+  const docId = sanitizeReceiptId(receiptNo);
+  const custName = document.getElementById("custName") ? document.getElementById("custName").value.trim() : "";
+  const memberNo = document.getElementById("memberNo") ? document.getElementById("memberNo").value.trim() : "";
+  const m = mode();
+
+  btn.disabled = true;
+  statusEl.textContent = "กำลังบันทึก...";
+  statusEl.style.color = "var(--muted)";
+
+  try{
+    // อ่านข้อมูลเดิมของใบเสร็จนี้ก่อน (ถ้ามี) เพื่อผูก "ขาย" กับ "ปล่อย" เข้าด้วยกัน
+    const existingSnap = await getDoc(doc(db, "receipts", docId));
+    const existing = existingSnap.exists() ? existingSnap.data() : null;
+    const existingItemsMap = {};
+    if(existing && existing.items){
+      existing.items.forEach(it=>{ existingItemsMap[it.name] = { ...it }; });
+    }
+
+    // รวมรายการจากฟอร์มปัจจุบัน (จับคู่ด้วยชื่อสินค้า)
+    const thisEvent = {};
+    items.forEach(it=>{
+      if(!it.name || !it.name.trim()) return;
+      const key = it.name.trim();
+      if(!thisEvent[key]) thisEvent[key] = { name:key, unit: it.unit||"", qty:0, remain:0 };
+      thisEvent[key].qty += Number(it.qty)||0;
+      thisEvent[key].unit = it.unit || thisEvent[key].unit;
+    });
+    if(backorderOn){
+      backorderItems.forEach(it=>{
+        if(!it.name || !it.name.trim()) return;
+        const key = it.name.trim();
+        if(!thisEvent[key]) thisEvent[key] = { name:key, unit: it.unit||"", qty:0, remain:0 };
+        thisEvent[key].remain += Number(it.qty)||0;
+        thisEvent[key].unit = it.unit || thisEvent[key].unit;
+      });
+    }
+
+    const finalItemsMap = { ...existingItemsMap };
+    const isSale = (m === "b2b_sale" || m === "pjs_sale");
+    const isRelease = (m === "pjs_release");
+
+    Object.values(thisEvent).forEach(ev=>{
+      const prior = finalItemsMap[ev.name];
+      if(isSale){
+        // "ขาย" กำหนดยอดสั่ง (ordered) ใหม่ ไม่ถือว่าครบจนกว่าจะมีการ "ปล่อย" มาหักออก
+        const deliveredSoFar = prior ? (prior.deliveredQty||0) : 0;
+        const ordered = ev.qty;
+        finalItemsMap[ev.name] = {
+          name: ev.name,
+          unit: ev.unit,
+          orderedQty: ordered,
+          deliveredQty: deliveredSoFar,
+          remainingQty: Math.max(0, ordered - deliveredSoFar)
+        };
+      } else if(isRelease){
+        if(prior){
+          // มีรายการขาย/ยอดสั่งเดิมอยู่แล้ว → เอายอดที่ปล่อยรอบนี้ไปหักยอดคงเหลือ
+          const newDelivered = (prior.deliveredQty||0) + ev.qty;
+          finalItemsMap[ev.name] = {
+            name: ev.name,
+            unit: ev.unit || prior.unit,
+            orderedQty: prior.orderedQty,
+            deliveredQty: newDelivered,
+            remainingQty: Math.max(0, prior.orderedQty - newDelivered)
+          };
+        } else {
+          // ยังไม่เคยมีข้อมูลขายมาก่อน ใช้ข้อมูลจากการปล่อยครั้งนี้เป็นฐานเอง
+          finalItemsMap[ev.name] = {
+            name: ev.name,
+            unit: ev.unit,
+            orderedQty: ev.qty + ev.remain,
+            deliveredQty: ev.qty,
+            remainingQty: ev.remain
+          };
+        }
+      } else {
+        // b2b_pickup: รายการนี้กำหนดยอดสั่ง/รับ/คงเหลือของตัวเองครบในตัว
+        finalItemsMap[ev.name] = {
+          name: ev.name,
+          unit: ev.unit,
+          orderedQty: ev.qty + ev.remain,
+          deliveredQty: ev.qty,
+          remainingQty: ev.remain
+        };
+      }
+    });
+
+    const lineItems = Object.values(finalItemsMap);
+
+    const saleInfo = {};
+    if(isSale){
+      const price = Number(document.getElementById("pjsPrice").value) || 0;
+      const discount = Number(document.getElementById("pjsDiscount").value) || 0;
+      saleInfo.price = price;
+      saleInfo.discount = discount;
+      saleInfo.total = price - discount;
+    }
+
+    const newHistoryEntry = {
+      date: new Date().toISOString(),
+      by: auth.currentUser.email,
+      note: isSale ? "บันทึกยอดขาย (ยังไม่ถือว่าครบ รอข้อมูลการปล่อย)" : (isRelease ? "บันทึกการปล่อยสินค้า" : "บันทึกครั้งแรกจากฟอร์มรายงาน"),
+      deliveredNow: Object.values(thisEvent).map(ev=>({name: ev.name, qty: isSale ? 0 : ev.qty}))
+    };
+    const history = existing && existing.history ? [...existing.history, newHistoryEntry] : [newHistoryEntry];
+
+    await setDoc(doc(db, "receipts", docId), {
+      receiptNo,
+      custName: custName || (existing ? existing.custName : null) || null,
+      memberNo: memberNo || (existing ? existing.memberNo : null) || null,
+      mode: m,
+      items: lineItems,
+      ...saleInfo,
+      createdAt: existing && existing.createdAt ? existing.createdAt : serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      createdBy: existing && existing.createdBy ? existing.createdBy : auth.currentUser.email,
+      history
+    });
+    if(custName || memberNo){
+      upsertCustomer(custName, memberNo);
+    }
+    lineItems.forEach(li=>{
+      if(li.name) upsertProduct(li.name, li.unit);
+    });
+    statusEl.textContent = "บันทึกเข้าฐานข้อมูลเรียบร้อยแล้ว";
+    statusEl.style.color = "var(--green-deep)";
+  } catch(err){
+    statusEl.textContent = "บันทึกไม่สำเร็จ: " + err.message;
+    statusEl.style.color = "var(--red)";
+  }
+  btn.disabled = false;
+};
+
+
+// ══════════════════════════ สถานะการปล่อย ══════════════════════════
+function modeLabel(m){
+  return {
+    b2b_pickup: "B2B · ลูกค้ามารับสินค้า",
+    b2b_sale: "B2B · ขายสินค้า",
+    pjs_sale: "PJS · ขายสินค้า",
+    pjs_release: "PJS · ปล่อยสินค้า"
+  }[m] || m;
+}
+
+function classify(d){
+  const items = d.items || [];
+  if(items.length === 0) return "done";
+  const allDone = items.every(it => (it.remainingQty||0) <= 0);
+  if(allDone) return "done";
+  const noneDelivered = items.every(it => (it.deliveredQty||0) <= 0);
+  if(noneDelivered) return "none";
+  return "partial";
+}
+
+function daysSinceSale(d){
+  if(!d.createdAt || !d.createdAt.toMillis) return null;
+  const ms = Date.now() - d.createdAt.toMillis();
+  return Math.floor(ms / (1000*60*60*24));
+}
+
+let allReceipts = [];
+let currentFilter = "partial";
+let expandedReceiptId = null;
+
+window.toggleReceiptDetail = function(id){
+  expandedReceiptId = (expandedReceiptId === id) ? null : id;
+  renderList();
+};
+
+window.setFilter = function(f){
+  currentFilter = f;
+  ["done","none","partial","overdue"].forEach(k=>{
+    document.getElementById("cell" + k.charAt(0).toUpperCase() + k.slice(1)).classList.toggle("active", k === f);
+  });
+  renderList();
+};
+
+window.loadReceipts = async function(){
+  const listEl = document.getElementById("listArea");
+  listEl.innerHTML = `<div class="card"><p class="empty-state">กำลังโหลด...</p></div>`;
+  try{
+    const snap = await getDocs(collection(db, "receipts"));
+    allReceipts = [];
+    snap.forEach(docSnap=>{
+      const d = docSnap.data();
+      const status = classify(d);
+      const days = daysSinceSale(d);
+      const overdue = status !== "done" && days !== null && days >= 7;
+      allReceipts.push({ id: docSnap.id, ...d, _status: status, _days: days, _overdue: overdue });
+    });
+    allReceipts.sort((a,b)=>{
+      const ta = a.updatedAt && a.updatedAt.toMillis ? a.updatedAt.toMillis() : 0;
+      const tb = b.updatedAt && b.updatedAt.toMillis ? b.updatedAt.toMillis() : 0;
+      return tb - ta;
+    });
+    document.getElementById("countDone").textContent = allReceipts.filter(r=>r._status==="done").length;
+    document.getElementById("countNone").textContent = allReceipts.filter(r=>r._status==="none").length;
+    document.getElementById("countPartial").textContent = allReceipts.filter(r=>r._status==="partial").length;
+    document.getElementById("countOverdue").textContent = allReceipts.filter(r=>r._overdue).length;
+    renderList();
+  } catch(err){
+    listEl.innerHTML = `<div class="card"><p class="empty-state" style="color:var(--red);">โหลดไม่สำเร็จ: ${err.message}</p></div>`;
+  }
+};
+
+function statusLabel(s){
+  return { done: "ปล่อยแล้ว", none: "ยังไม่ปล่อย", partial: "ปล่อยไม่ครบ" }[s];
+}
+
+function fmtDate(ts){
+  if(!ts || !ts.toMillis) return "-";
+  const dt = new Date(ts.toMillis());
+  return dt.toLocaleDateString("th-TH",{day:"2-digit",month:"2-digit",year:"2-digit"}) + " " + dt.toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"});
+}
+
+function renderDetailPanel(d){
+  const itemRows = (d.items||[]).map(it=>{
+    const remaining = it.remainingQty||0;
+    const isDone = remaining <= 0;
+    return `<div class="item-row ${isDone?'done':'pending'}">
+      <div class="item-name">${it.name || "-"}</div>
+      <div class="item-stats">
+        <span>สั่ง: <b>${it.orderedQty||0} ${it.unit||""}</b></span>
+        <span>ปล่อยแล้ว: <b>${it.deliveredQty||0} ${it.unit||""}</b></span>
+        <span>คงเหลือ: <b>${remaining} ${it.unit||""}</b></span>
+      </div>
+    </div>`;
+  }).join("");
+
+  let historyHtml = "";
+  if(d.history && d.history.length){
+    const numbered = d.history.map((h,i)=>({...h, _round: i+1}));
+    historyHtml = `<p class="section-title" style="margin-top:14px;">ประวัติการปล่อย (${d.history.length} รอบ)</p>` +
+      numbered.slice().reverse().map(h=>{
+        const dt = new Date(h.date);
+        const dateStr = dt.toLocaleDateString("th-TH",{day:"2-digit",month:"2-digit",year:"2-digit"}) + " " + dt.toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"});
+        const deliveredItems = (h.deliveredNow||[]).filter(x=>x.qty>0);
+        const itemListHtml = deliveredItems.length
+          ? deliveredItems.map(x=>`<div style="font-size:13.5px;padding:2px 0;">• ${x.name}: <b>${x.qty}</b></div>`).join("")
+          : `<div style="font-size:13.5px;color:var(--muted);">${h.note || "-"}</div>`;
+        return `<div style="padding:9px 0;border-bottom:1px dashed var(--line-dot);">
+          <div class="top-row" style="margin-bottom:3px;">
+            <span style="font-size:12.5px;font-weight:700;color:var(--green-deep);">รอบที่ ${h._round}</span>
+            <span class="days-hint">${dateStr}</span>
+          </div>
+          ${itemListHtml}
+          <div class="days-hint" style="margin-top:3px;">โดย ${h.by||"-"}</div>
+        </div>`;
+      }).join("");
+  }
+
+  return `<div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line-dot);">
+    <div class="meta-row"><span>เลขที่สมาชิก</span><span>${d.memberNo || "-"}</span></div>
+    <div class="meta-row"><span>ประเภท</span><span>${modeLabel(d.mode)}</span></div>
+    <div class="meta-row"><span>บันทึกขายเมื่อ</span><span>${fmtDate(d.createdAt)}</span></div>
+    <div class="meta-row"><span>อัปเดตล่าสุด</span><span>${fmtDate(d.updatedAt)}</span></div>
+    <p class="section-title" style="margin-top:14px;">รายการสินค้า</p>
+    ${itemRows}
+    ${historyHtml}
+  </div>`;
+}
+
+function renderList(){
+  const listEl = document.getElementById("listArea");
+  const filtered = currentFilter === "overdue"
+    ? allReceipts.filter(r => r._overdue)
+    : allReceipts.filter(r => r._status === currentFilter);
+  if(filtered.length === 0){
+    listEl.innerHTML = `<div class="card"><p class="empty-state">ไม่มีรายการในหมวดนี้</p></div>`;
+    return;
+  }
+  listEl.innerHTML = filtered.map(d=>{
+    const itemLines = (d.items||[]).map(it=>
+      `${it.name}: ${it.deliveredQty||0}/${it.orderedQty||0} ${it.unit}`
+    ).join(" · ");
+    const overdueBadge = d._overdue
+      ? `<span class="status-pill overdue-pill">⚠️ ค้าง ${d._days} วัน</span>`
+      : (d._days !== null && d._status !== "done" ? `<span class="days-hint">${d._days} วันที่แล้ว</span>` : ``);
+    const isExpanded = expandedReceiptId === d.id;
+    return `<div class="receipt-card clickable ${d._overdue ? 'is-overdue' : ''}" onclick="toggleReceiptDetail('${d.id}')">
+      <div class="top-row">
+        <span class="receipt-no">${d.receiptNo}</span>
+        <span class="status-pill ${d._status}">${statusLabel(d._status)}</span>
+      </div>
+      <div class="cust">${d.custName || modeLabel(d.mode)}</div>
+      ${overdueBadge ? `<div style="margin:4px 0;">${overdueBadge}</div>` : ``}
+      <div class="item-line">${itemLines}</div>
+      ${isExpanded ? renderDetailPanel(d) : ``}
+    </div>`;
+  }).join("");
+}
+
+</script>
+
+</body>
+</html>
