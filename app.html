@@ -365,8 +365,10 @@
     transition:background .15s;
   }
   .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
-  .receipt-no{font-weight:700;font-size:14.5px;}
+  .receipt-no{font-weight:800;font-size:16px;color:var(--green-deep);}
   .cust{font-size:12.5px;color:var(--muted);}
+  .card-meta-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin:6px 0 0;}
+  .item-summary{font-size:12.5px;color:var(--ink);line-height:1.6;margin-top:8px;padding:9px 10px;background:#F2F4F2;border-radius:10px;}
 
   .tabs{display:flex;gap:3px;margin-bottom:14px;background:#EDEFEC;border-radius:12px;padding:3px;}
   .tab-btn{
@@ -1596,6 +1598,7 @@ window.saveToDatabase = async function(){
     const newHistoryEntry = {
       date: new Date().toISOString(),
       by: auth.currentUser.email,
+      kind: isSale ? "sale" : (isRelease ? "release" : "create"),
       note: isSale ? "บันทึกยอดขาย (ยังไม่ถือว่าครบ รอข้อมูลการปล่อย)" : (isRelease ? "บันทึกการปล่อยสินค้า" : "บันทึกครั้งแรกจากฟอร์มรายงาน"),
       deliveredNow: Object.values(thisEvent).map(ev=>({name: ev.name, qty: isSale ? 0 : ev.qty}))
     };
@@ -1741,6 +1744,11 @@ function fmtDate(ts){
   return dt.toLocaleDateString("th-TH",{day:"2-digit",month:"2-digit",year:"2-digit"}) + " " + dt.toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"});
 }
 
+function fmtDateOnly(ts){
+  if(!ts || !ts.toMillis) return "-";
+  return new Date(ts.toMillis()).toLocaleDateString("th-TH",{day:"2-digit",month:"2-digit",year:"2-digit"});
+}
+
 function renderDetailPanel(d){
   const itemRows = (d.items||[]).map(it=>{
     const remaining = it.remainingQty||0;
@@ -1757,8 +1765,16 @@ function renderDetailPanel(d){
 
   let historyHtml = "";
   if(d.history && d.history.length){
-    const numbered = d.history.map((h,i)=>({...h, _round: i+1}));
-    historyHtml = `<p class="section-title" style="margin-top:14px;">ประวัติการปล่อย (${d.history.length} รอบ)</p>` +
+    // การนับ "รอบที่ N" นับเฉพาะรอบที่มีการปล่อยสินค้าจริง ส่วนรายการบันทึกยอดขาย (kind:"sale")
+    // เป็นแค่การตั้งฐานยอดสั่ง ไม่ถือเป็นรอบปล่อย
+    let round = 0;
+    const numbered = d.history.map(h=>{
+      const isSaleEntry = h.kind ? h.kind === "sale" : /^บันทึกยอดขาย/.test(h.note || "");
+      if(!isSaleEntry) round++;
+      return { ...h, _round: isSaleEntry ? null : round };
+    });
+    const releaseRounds = numbered.filter(h=>h._round !== null).length;
+    historyHtml = `<p class="section-title" style="margin-top:14px;">ประวัติการปล่อย (${releaseRounds} รอบ)</p>` +
       numbered.slice().reverse().map(h=>{
         const dt = new Date(h.date);
         const dateStr = dt.toLocaleDateString("th-TH",{day:"2-digit",month:"2-digit",year:"2-digit"}) + " " + dt.toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"});
@@ -1766,9 +1782,10 @@ function renderDetailPanel(d){
         const itemListHtml = deliveredItems.length
           ? deliveredItems.map(x=>`<div style="font-size:13.5px;padding:2px 0;">• ${x.name}: <b>${x.qty}</b></div>`).join("")
           : `<div style="font-size:13.5px;color:var(--muted);">${h.note || "-"}</div>`;
+        const roundLabel = h._round !== null ? `รอบที่ ${h._round}` : "บันทึกยอดขาย";
         return `<div style="padding:9px 0;border-bottom:1px dashed var(--line-dot);">
           <div class="top-row" style="margin-bottom:3px;">
-            <span style="font-size:12.5px;font-weight:700;color:var(--green-deep);">รอบที่ ${h._round}</span>
+            <span style="font-size:12.5px;font-weight:700;color:var(--green-deep);">${roundLabel}</span>
             <span class="days-hint">${dateStr}</span>
           </div>
           ${itemListHtml}
@@ -1803,6 +1820,7 @@ function renderList(){
     const itemLines = (d.items||[]).map(it=>
       `${it.name}: ${it.deliveredQty||0}/${it.orderedQty||0} ${it.unit}`
     ).join(" · ");
+    const saleDateStr = fmtDateOnly(d.createdAt);
     const overdueBadge = d._overdue
       ? `<span class="status-pill overdue-pill">⚠️ ค้าง ${d._days} วัน</span>`
       : (d._days !== null && d._status !== "done" ? `<span class="days-hint">${d._days} วันที่แล้ว</span>` : ``);
@@ -1813,8 +1831,11 @@ function renderList(){
         <span class="status-pill ${d._status}">${statusLabel(d._status)}</span>
       </div>
       <div class="cust">${d.custName || modeLabel(d.mode)}</div>
-      ${overdueBadge ? `<div style="margin:4px 0;">${overdueBadge}</div>` : ``}
-      <div class="item-line">${itemLines}</div>
+      <div class="card-meta-row">
+        <span class="days-hint">ขายเมื่อ ${saleDateStr}</span>
+        ${overdueBadge}
+      </div>
+      <div class="item-summary">${itemLines}</div>
       ${isExpanded ? renderDetailPanel(d) : ``}
     </div>`;
   }).join("");
