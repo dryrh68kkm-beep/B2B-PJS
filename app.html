@@ -611,7 +611,7 @@
           <select id="palletDirection" onchange="updatePreview()">
             <option value="deposit">ลูกค้านำมาฝาก</option>
             <option value="return">รับคืนจากลูกค้า</option>
-            <option value="transport_take">ขนส่งนำไป</option>
+            <option value="exchange">ลูกค้านำมาเปลี่ยน</option>
           </select>
         </div>
         <div class="field">
@@ -1129,7 +1129,7 @@ function buildText(){
       } else if(dir === "return"){
         lines.push(`ลูกค้ารับพาเลท${color}คืน`);
       } else {
-        lines.push(`ขนส่งนำพาเลท${color}ไป`);
+        lines.push(`ลูกค้านำพาเลท${color}มาเปลี่ยน`);
       }
       lines.push(`จำนวน${qty} เลท`);
     }
