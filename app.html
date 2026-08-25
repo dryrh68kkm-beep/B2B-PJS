@@ -1536,7 +1536,7 @@ window.saveToDatabase = async function(){
 
     const finalItemsMap = { ...existingItemsMap };
     const isSale = (m === "b2b_sale" || m === "pjs_sale");
-    const isRelease = (m === "pjs_release");
+    const hadPriorItems = Object.keys(existingItemsMap).length > 0;
 
     Object.values(thisEvent).forEach(ev=>{
       const prior = finalItemsMap[ev.name];
@@ -1551,29 +1551,19 @@ window.saveToDatabase = async function(){
           deliveredQty: deliveredSoFar,
           remainingQty: Math.max(0, ordered - deliveredSoFar)
         };
-      } else if(isRelease){
-        if(prior){
-          // มีรายการขาย/ยอดสั่งเดิมอยู่แล้ว → เอายอดที่ปล่อยรอบนี้ไปหักยอดคงเหลือ
-          const newDelivered = (prior.deliveredQty||0) + ev.qty;
-          finalItemsMap[ev.name] = {
-            name: ev.name,
-            unit: ev.unit || prior.unit,
-            orderedQty: prior.orderedQty,
-            deliveredQty: newDelivered,
-            remainingQty: Math.max(0, prior.orderedQty - newDelivered)
-          };
-        } else {
-          // ยังไม่เคยมีข้อมูลขายมาก่อน ใช้ข้อมูลจากการปล่อยครั้งนี้เป็นฐานเอง
-          finalItemsMap[ev.name] = {
-            name: ev.name,
-            unit: ev.unit,
-            orderedQty: ev.qty + ev.remain,
-            deliveredQty: ev.qty,
-            remainingQty: ev.remain
-          };
-        }
+      } else if(prior){
+        // มีรายการขาย/ยอดสั่งเดิมอยู่แล้ว (ทั้งปล่อยสินค้า PJS และลูกค้ามารับสินค้า B2B รอบถัดๆ ไป)
+        // → เอายอดที่ปล่อย/รับรอบนี้ไปสะสมกับยอดเดิม แล้วหักยอดคงเหลือจากยอดสั่งเดิม
+        const newDelivered = (prior.deliveredQty||0) + ev.qty;
+        finalItemsMap[ev.name] = {
+          name: ev.name,
+          unit: ev.unit || prior.unit,
+          orderedQty: prior.orderedQty,
+          deliveredQty: newDelivered,
+          remainingQty: Math.max(0, prior.orderedQty - newDelivered)
+        };
       } else {
-        // b2b_pickup: รายการนี้กำหนดยอดสั่ง/รับ/คงเหลือของตัวเองครบในตัว
+        // ยังไม่เคยมีข้อมูลมาก่อน (ปล่อย PJS หรือลูกค้ามารับ B2B ครั้งแรก) ใช้ข้อมูลจากรอบนี้เป็นฐานเอง
         finalItemsMap[ev.name] = {
           name: ev.name,
           unit: ev.unit,
@@ -1598,8 +1588,8 @@ window.saveToDatabase = async function(){
     const newHistoryEntry = {
       date: new Date().toISOString(),
       by: auth.currentUser.email,
-      kind: isSale ? "sale" : (isRelease ? "release" : "create"),
-      note: isSale ? "บันทึกยอดขาย (ยังไม่ถือว่าครบ รอข้อมูลการปล่อย)" : (isRelease ? "บันทึกการปล่อยสินค้า" : "บันทึกครั้งแรกจากฟอร์มรายงาน"),
+      kind: isSale ? "sale" : (hadPriorItems ? "release" : "create"),
+      note: isSale ? "บันทึกยอดขาย (ยังไม่ถือว่าครบ รอข้อมูลการปล่อย)" : (hadPriorItems ? "บันทึกการปล่อยสินค้า" : "บันทึกครั้งแรกจากฟอร์มรายงาน"),
       deliveredNow: Object.values(thisEvent).map(ev=>({name: ev.name, qty: isSale ? 0 : ev.qty}))
     };
     const history = existing && existing.history ? [...existing.history, newHistoryEntry] : [newHistoryEntry];
