@@ -611,7 +611,7 @@
           <select id="palletDirection" onchange="updatePreview()">
             <option value="deposit">ลูกค้านำมาฝาก</option>
             <option value="return">รับคืนจากลูกค้า</option>
-            <option value="transport_take">ขนส่งนำไป</option>
+            <option value="exchange">ลูกค้านำมาเปลี่ยน</option>
           </select>
         </div>
         <div class="field">
@@ -1129,7 +1129,7 @@ function buildText(){
       } else if(dir === "return"){
         lines.push(`ลูกค้ารับพาเลท${color}คืน`);
       } else {
-        lines.push(`ขนส่งนำพาเลท${color}ไป`);
+        lines.push(`ลูกค้านำพาเลท${color}มาเปลี่ยน`);
       }
       lines.push(`จำนวน${qty} เลท`);
     }
@@ -1698,6 +1698,59 @@ window.deleteReceiptCard = async function(id){
   }
 };
 
+let deleteRoundConfirmPending = null;
+
+window.deleteHistoryRound = async function(receiptId, historyIndex){
+  const key = receiptId + "_" + historyIndex;
+  const statusEl = document.getElementById("deleteRoundStatus_" + key);
+  if(deleteRoundConfirmPending !== key){
+    deleteRoundConfirmPending = key;
+    if(statusEl){
+      statusEl.textContent = "แน่ใจนะ? กดปุ่มซ้ำอีกครั้งเพื่อยืนยันการลบรอบนี้ (ลบแล้วกู้คืนไม่ได้)";
+      statusEl.style.color = "var(--red)";
+    }
+    setTimeout(()=>{ if(deleteRoundConfirmPending === key) deleteRoundConfirmPending = null; }, 5000);
+    return;
+  }
+  deleteRoundConfirmPending = null;
+  if(statusEl){
+    statusEl.textContent = "กำลังลบ...";
+    statusEl.style.color = "var(--muted)";
+  }
+  try{
+    const snap = await getDoc(doc(db, "receipts", receiptId));
+    if(!snap.exists()) return;
+    const data = snap.data();
+    const history = [...(data.history||[])];
+    const removed = history[historyIndex];
+    if(!removed){
+      if(statusEl) statusEl.textContent = "ไม่พบรอบนี้แล้ว (อาจถูกลบไปก่อนหน้า)";
+      return;
+    }
+    history.splice(historyIndex, 1);
+
+    // หักยอด "ปล่อยแล้ว" ของแต่ละสินค้าตามจำนวนที่รอบนี้เคยปล่อย แล้วคำนวณคงเหลือใหม่
+    const items = (data.items||[]).map(it=>({ ...it }));
+    (removed.deliveredNow||[]).forEach(ev=>{
+      if(!ev.qty) return;
+      const it = items.find(i=>i.name === ev.name);
+      if(it){
+        it.deliveredQty = Math.max(0, (it.deliveredQty||0) - ev.qty);
+        it.remainingQty = Math.max(0, (it.orderedQty||0) - it.deliveredQty);
+      }
+    });
+
+    await updateDoc(doc(db, "receipts", receiptId), { items, history, updatedAt: serverTimestamp() });
+    showToast("ลบรอบที่เลือกเรียบร้อยแล้ว");
+    loadReceipts();
+  } catch(err){
+    if(statusEl){
+      statusEl.textContent = "ลบไม่สำเร็จ: " + err.message;
+      statusEl.style.color = "var(--red)";
+    }
+  }
+};
+
 window.setFilter = function(f){
   currentFilter = f;
   ["done","none","partial","overdue"].forEach(k=>{
@@ -1768,10 +1821,10 @@ function renderDetailPanel(d){
     // การนับ "รอบที่ N" นับเฉพาะรอบที่มีการปล่อยสินค้าจริง ส่วนรายการบันทึกยอดขาย (kind:"sale")
     // เป็นแค่การตั้งฐานยอดสั่ง ไม่ถือเป็นรอบปล่อย
     let round = 0;
-    const numbered = d.history.map(h=>{
+    const numbered = d.history.map((h,i)=>{
       const isSaleEntry = h.kind ? h.kind === "sale" : /^บันทึกยอดขาย/.test(h.note || "");
       if(!isSaleEntry) round++;
-      return { ...h, _round: isSaleEntry ? null : round };
+      return { ...h, _round: isSaleEntry ? null : round, _index: i };
     });
     const releaseRounds = numbered.filter(h=>h._round !== null).length;
     historyHtml = `<p class="section-title" style="margin-top:14px;">ประวัติการปล่อย (${releaseRounds} รอบ)</p>` +
@@ -1789,7 +1842,11 @@ function renderDetailPanel(d){
             <span class="days-hint">${dateStr}</span>
           </div>
           ${itemListHtml}
-          <div class="days-hint" style="margin-top:3px;">โดย ${h.by||"-"}</div>
+          <div class="top-row" style="margin-top:3px;">
+            <span class="days-hint">โดย ${h.by||"-"}</span>
+            ${h._round !== null ? `<button onclick="event.stopPropagation(); deleteHistoryRound('${d.id}', ${h._index})" style="background:none;border:none;color:var(--red);font-size:11.5px;font-weight:700;cursor:pointer;padding:0;">ลบรอบนี้</button>` : ``}
+          </div>
+          ${h._round !== null ? `<p id="deleteRoundStatus_${d.id}_${h._index}" style="font-size:11px;margin:3px 0 0;"></p>` : ``}
         </div>`;
       }).join("");
   }
