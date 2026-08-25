@@ -1457,6 +1457,22 @@ window.onReceiptNoLookup = async function(receiptNo){
   }
 };
 
+window.goReleaseThisItem = function(receiptNo, mode){
+  // แตะการ์ดสินค้าคงค้างจากหน้า "สถานะการปล่อย" → สลับไปหน้ากรอกรายงานในโหมดปล่อย/รับสินค้าที่ตรงกัน
+  // แล้วดึงข้อมูลใบเสร็จเดิมมาเติมให้อัตโนมัติ เหลือแค่กรอกจำนวนที่ปล่อยรอบนี้
+  switchPage("report");
+  if(mode === "b2b_pickup" || mode === "b2b_sale"){
+    switchType("b2b");
+    switchB2bMode("pickup");
+  } else {
+    switchType("pjs");
+    switchPjsMode("release");
+  }
+  document.getElementById("receiptNo").value = receiptNo;
+  onReceiptNoLookup(receiptNo);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
 async function upsertCustomer(custName, memberNo){
   if(!custName && !memberNo) return;
   try{
@@ -1796,13 +1812,15 @@ function renderDetailPanel(d){
   const itemRows = (d.items||[]).map(it=>{
     const remaining = it.remainingQty||0;
     const isDone = remaining <= 0;
-    return `<div class="item-row ${isDone?'done':'pending'}">
+    const tapToRelease = isDone ? `` : ` onclick="event.stopPropagation(); goReleaseThisItem('${d.receiptNo}','${d.mode}')" style="cursor:pointer;"`;
+    return `<div class="item-row ${isDone?'done':'pending'}"${tapToRelease}>
       <div class="item-name">${it.name || "-"}</div>
       <div class="item-stats">
         <span>สั่ง: <b>${it.orderedQty||0} ${it.unit||""}</b></span>
         <span>ปล่อยแล้ว: <b>${it.deliveredQty||0} ${it.unit||""}</b></span>
         <span>คงเหลือ: <b>${remaining} ${it.unit||""}</b></span>
       </div>
+      ${isDone ? `` : `<div class="days-hint" style="margin-top:6px;">แตะเพื่อไปกรอกยอดปล่อย →</div>`}
     </div>`;
   }).join("");
 
