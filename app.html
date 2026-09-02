@@ -9,22 +9,35 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="B2B/PJS Sainoi">
-<meta name="theme-color" content="#0B5D3B">
+<meta name="theme-color" content="#1FA39F">
 <style>
 
   :root{
-    --green-deep:#0B5D3B;
-    --green:#12804F;
-    --green-soft:#E4F3EC;
+    /* LP Work Hub palette — Soft Blue + Teal + Navy */
+    --page-bg:#EEF5F8;
+    --card:#FFFFFF;
+    --ink:#15283B;
+    --muted:#6F8090;
+    --heading:#132638;
+    --teal:#28B7B3;
+    --teal-strong:#1FA39F;
+    --teal-soft:#DDF4F2;
+    --blue:#43A7F2;
+    --blue-soft:#E7F2FB;
+    --border:#D7E3E9;
+    --divider:#E6EEF2;
+    --surface-soft:#F4F8FA;
     --red:#C8272A;
     --red-soft:#FBE4E4;
-    --cream:#FAF8F4;
-    --ink:#1B211D;
-    --muted:#6B756E;
-    --line-dot:#C9CFC9;
-    --card:#FFFFFF;
     --amber:#B8790A;
     --amber-soft:#FBF0DB;
+    --line-dot:#D7E3E9;
+
+    /* legacy aliases so the rest of the stylesheet keeps working unchanged */
+    --green-deep:var(--teal-strong);
+    --green:var(--teal);
+    --green-soft:var(--teal-soft);
+    --cream:var(--page-bg);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
@@ -36,7 +49,7 @@
     -webkit-font-smoothing:antialiased;
   }
   header{
-    background:linear-gradient(135deg,var(--green-deep),var(--green));
+    background:linear-gradient(135deg,var(--teal-strong),var(--blue));
     color:#fff;
     padding:24px 18px 22px;
     position:relative;
@@ -47,7 +60,7 @@
     position:absolute;
     right:-30px; top:-30px;
     width:140px;height:140px;
-    border:2px solid rgba(255,255,255,0.15);
+    border:2px solid rgba(255,255,255,0.12);
     border-radius:50%;
   }
   header .eyebrow{
@@ -77,8 +90,8 @@
     border-radius:16px;
     padding:17px;
     margin-bottom:14px;
-    box-shadow:0 1px 2px rgba(11,93,59,0.06), 0 4px 14px rgba(11,93,59,0.05);
-    border:1px solid rgba(11,93,59,0.06);
+    box-shadow:0 1px 2px rgba(21,40,59,0.05), 0 4px 14px rgba(21,40,59,0.04);
+    border:1px solid var(--border);
   }
 
   .field-row{display:flex;gap:10px;margin-bottom:10px;}
@@ -86,24 +99,28 @@
   .field{flex:1;display:flex;flex-direction:column;gap:5px;min-width:0;}
   label{font-size:12px;color:var(--muted);font-weight:600;}
   input[type=text], input[type=date], input[type=number], select{
-    border:1px solid #DADFDA;
+    border:1px solid var(--border);
     border-radius:9px;
     padding:10px 11px;
     font-size:14.5px;
     font-family:inherit;
-    background:#fff;
+    background:var(--card);
     color:var(--ink);
     width:100%;
   }
-  input:focus, select:focus{outline:2px solid var(--green);outline-offset:1px;}
+  input:focus, select:focus{
+    outline:none;
+    border-color:var(--teal);
+    box-shadow:0 0 0 3px rgba(40,183,179,0.15);
+  }
 
   .type-toggle{display:flex;gap:8px;}
   .type-btn{
     flex:1;
     padding:12px 8px;
     border-radius:10px;
-    border:1.5px solid #DADFDA;
-    background:#fff;
+    border:1.5px solid var(--border);
+    background:var(--card);
     font-size:14.5px;
     font-weight:700;
     color:var(--muted);
@@ -142,7 +159,7 @@
   .switch input{opacity:0;width:0;height:0;}
   .slider{
     position:absolute;cursor:pointer;inset:0;
-    background:#D8DED9;border-radius:999px;
+    background:var(--border);border-radius:999px;
     transition:.15s;
   }
   .slider::before{
@@ -158,8 +175,8 @@
   .item{
     padding:13px;
     border-radius:12px;
-    background:#FBFCFB;
-    border:1px solid #E7EBE8;
+    background:var(--surface-soft);
+    border:1px solid var(--divider);
     margin-bottom:10px;
   }
   .item-top{
@@ -178,7 +195,7 @@
     padding:3px 8px;
   }
   .remove-btn{
-    border:none;background:none;color:#B7BDB7;
+    border:none;background:none;color:#AAB9C4;
     font-size:17px;line-height:1;padding:2px 6px;cursor:pointer;
     flex-shrink:0;
   }
@@ -188,7 +205,7 @@
     width:100%;
     padding:11px;
     border-radius:10px;
-    border:1.5px dashed #B9C4BC;
+    border:1.5px dashed rgba(40,183,179,0.45);
     background:transparent;
     color:var(--green-deep);
     font-weight:700;
@@ -208,11 +225,11 @@
     font-family:"Consolas","SFMono-Regular",monospace;
     font-size:12.5px;
     line-height:1.55;
-    background:#F4F6F4;
+    background:var(--surface-soft);
     border-radius:10px;
     padding:12px;
-    color:#2B332E;
-    border:1px solid #E3E8E3;
+    color:var(--ink);
+    border:1px solid var(--divider);
     max-height:280px;
     overflow-y:auto;
   }
@@ -221,7 +238,7 @@
     position:fixed;
     left:0;right:0;bottom:0;
     background:#fff;
-    border-top:1px solid #E3E8E3;
+    border-top:1px solid var(--divider);
     padding:10px 16px calc(10px + env(safe-area-inset-bottom));
     display:flex;
     gap:10px;
@@ -238,9 +255,9 @@
     font-family:inherit;
     cursor:pointer;
   }
-  .btn-copy{background:#EEF1EE;color:var(--ink);}
-  .btn-line{background:var(--green);color:#fff;}
-  .btn-line:active{background:var(--green-deep);}
+  .btn-copy{background:var(--surface-soft);color:var(--ink);border:1px solid var(--border);}
+  .btn-line{background:var(--teal);color:#fff;}
+  .btn-line:active{background:var(--teal-strong);}
 
   .money-summary{
     display:flex;
@@ -280,7 +297,7 @@
   .page-nav{
     display:flex;
     gap:3px;
-    background:#EDEFEC;
+    background:#EAF2F5;
     border-radius:12px;
     padding:3px;
   }
@@ -288,7 +305,7 @@
     flex:1;
     padding:10px 6px;
     border-radius:9px;
-    border:none;
+    border:1.5px solid transparent;
     background:transparent;
     font-size:12.5px;
     font-weight:700;
@@ -299,8 +316,9 @@
   }
   .page-nav-btn.active{
     background:#fff;
-    color:var(--green-deep);
-    box-shadow:0 1px 3px rgba(11,93,59,0.16);
+    border-color:var(--border);
+    color:var(--teal-strong);
+    box-shadow:0 1px 3px rgba(21,40,59,0.08);
   }
   .page{display:none;}
   .page.active{display:block;}
@@ -318,8 +336,8 @@
 
   .item-row{
     border-radius:12px;
-    background:#FBFCFB;
-    border:1px solid #E7EBE8;
+    background:var(--surface-soft);
+    border:1px solid var(--divider);
     padding:12px;
     margin-bottom:10px;
   }
@@ -359,8 +377,8 @@
   .receipt-card{
     padding:13px;
     border-radius:13px;
-    background:#FBFCFB;
-    border:1px solid #E7EBE8;
+    background:var(--surface-soft);
+    border:1px solid var(--divider);
     margin-bottom:10px;
     transition:background .15s;
   }
@@ -368,14 +386,14 @@
   .receipt-no{font-weight:800;font-size:16px;color:var(--green-deep);}
   .cust{font-size:12.5px;color:var(--muted);}
   .card-meta-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin:6px 0 0;}
-  .item-summary{font-size:12.5px;color:var(--ink);line-height:1.6;margin-top:8px;padding:9px 10px;background:#F2F4F2;border-radius:10px;}
+  .item-summary{font-size:12.5px;color:var(--ink);line-height:1.6;margin-top:8px;padding:9px 10px;background:var(--blue-soft);border-radius:10px;}
 
-  .tabs{display:flex;gap:3px;margin-bottom:14px;background:#EDEFEC;border-radius:12px;padding:3px;}
+  .tabs{display:flex;gap:3px;margin-bottom:14px;background:#EAF2F5;border-radius:12px;padding:3px;}
   .tab-btn{
     flex:1;
     padding:10px 6px;
     border-radius:9px;
-    border:none;
+    border:1.5px solid transparent;
     background:transparent;
     font-size:12.5px;
     font-weight:700;
@@ -384,7 +402,7 @@
     font-family:inherit;
     transition:background .15s, color .15s, box-shadow .15s;
   }
-  .tab-btn.active{background:#fff;color:var(--green-deep);box-shadow:0 1px 3px rgba(11,93,59,0.16);}
+  .tab-btn.active{background:#fff;border-color:var(--border);color:var(--teal-strong);box-shadow:0 1px 3px rgba(21,40,59,0.08);}
 
   .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .summary-cell{
@@ -718,7 +736,7 @@
 
 <!-- ── Login gate ── -->
 <div id="loginOverlay" style="position:fixed;inset:0;background:var(--cream);z-index:999;display:flex;align-items:center;justify-content:center;padding:24px;">
-  <div style="width:100%;max-width:360px;background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(11,93,59,0.12);">
+  <div style="width:100%;max-width:360px;background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(21,40,59,0.10);">
     <p style="font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 4px;">Loss Prevention · Big C Sainoi</p>
     <h2 style="margin:0 0 18px;font-size:19px;color:var(--green-deep);">เข้าสู่ระบบ</h2>
     <div class="field">
