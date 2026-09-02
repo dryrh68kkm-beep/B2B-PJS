@@ -38,6 +38,21 @@
     --green:var(--teal);
     --green-soft:var(--teal-soft);
     --cream:var(--page-bg);
+
+    /* สถานะการปล่อย / รายละเอียดใบเสร็จ — refined tokens scoped to that page's own classes */
+    --teal2:#1FA6A3;
+    --teal2-soft:#E5F7F6;
+    --blue2:#3D8EF7;
+    --blue2-soft:#EAF4FF;
+    --blue2-border:#C9E2FF;
+    --border2:#D8E4EA;
+    --text2:#718096;
+    --warn2-bg:#FFF6E5;
+    --warn2-border:#F0B34A;
+    --warn2-text:#F59E0B;
+    --danger2-bg:#FDECEC;
+    --danger2-border:#F8C5C5;
+    --danger2-text:#D92D20;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
@@ -331,21 +346,40 @@
   .search-row{display:flex;gap:8px;}
   .search-row input{flex:1;}
 
-  .meta-row{display:flex;justify-content:space-between;font-size:13.5px;padding:5px 0;}
-  .meta-row span:first-child{color:var(--muted);}
+  /* ══════════ สถานะการปล่อย / รายละเอียดใบเสร็จ ══════════ */
+
+  .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px 16px;margin-top:14px;}
+  .info-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--divider);}
+  .info-item:last-child{border-bottom:none;}
+  .info-icon{
+    width:30px;height:30px;border-radius:9px;flex-shrink:0;
+    background:var(--blue2-soft);color:var(--blue2);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .info-icon svg{display:block;}
+  .info-body{min-width:0;}
+  .info-label{font-size:12px;color:var(--text2);margin-bottom:2px;}
+  .info-value{font-size:14px;font-weight:700;color:var(--ink);word-break:break-word;}
 
   .item-row{
-    border-radius:12px;
-    background:var(--surface-soft);
-    border:1px solid var(--divider);
-    padding:12px;
+    border-radius:16px;
+    padding:16px;
     margin-bottom:10px;
+    border:1px solid var(--divider);
+    background:var(--surface-soft);
   }
-  .item-row.done{background:var(--green-soft);border-color:var(--green);}
-  .item-row.pending{background:var(--amber-soft);border-color:var(--amber);}
-  .item-name{font-weight:700;font-size:14.5px;margin-bottom:8px;}
-  .item-stats{display:flex;gap:10px;font-size:12.5px;color:var(--muted);margin-bottom:8px;flex-wrap:wrap;}
-  .item-stats b{color:var(--ink);}
+  .item-row.done{background:var(--teal2-soft);border-color:var(--teal2);}
+  .item-row.pending{background:var(--warn2-bg);border-color:var(--warn2-border);}
+  .item-name{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;margin-bottom:8px;}
+  .item-name svg{flex-shrink:0;}
+  .item-row.pending .item-name svg{color:var(--warn2-text);}
+  .item-row.done .item-name svg{color:var(--teal2);}
+  .item-stats{font-size:13px;color:var(--ink);line-height:1.8;}
+  .item-stats b{font-weight:700;}
+  .item-stats .stat-order, .item-stats .stat-delivered{color:var(--teal2);}
+  .item-stats .stat-remaining{color:var(--warn2-text);}
+  .item-stats .stat-sep{color:var(--border2);margin:0 6px;font-weight:400;}
+  .release-tap-link{margin-top:10px;padding-top:10px;border-top:1px dashed var(--border2);color:var(--teal2);font-size:13px;font-weight:600;}
   .pickup-input{display:flex;align-items:center;gap:8px;}
   .pickup-input input{width:90px;}
   .pickup-input span{font-size:13px;color:var(--muted);}
@@ -355,17 +389,18 @@
     display:inline-block;
     font-size:11.5px;
     font-weight:700;
-    padding:3px 9px;
+    padding:4px 11px;
     border-radius:999px;
+    flex-shrink:0;
   }
-  .status-pill.done{background:var(--green-soft);color:var(--green-deep);}
-  .status-pill.pending, .status-pill.none{background:var(--amber-soft);color:var(--amber);}
-  .status-pill.partial{background:var(--red-soft);color:var(--red);}
+  .status-pill.done{background:var(--teal2-soft);color:var(--teal2);}
+  .status-pill.pending, .status-pill.none{background:var(--warn2-bg);color:var(--warn2-text);}
+  .status-pill.partial{background:var(--danger2-bg);color:var(--danger2-text);}
   .status-pill.overdue-pill{background:#3A1414;color:#FF8A80;}
-  .days-hint{font-size:11.5px;color:var(--muted);}
-  .receipt-card.is-overdue{border-color:var(--red);background:var(--red-soft);}
+  .days-hint{font-size:11.5px;color:var(--text2);}
+  .receipt-card.is-overdue{border-color:var(--danger2-border);border-width:1.5px;}
   .receipt-card.clickable{cursor:pointer;}
-  .receipt-card.clickable:active{background:var(--green-soft);}
+  .receipt-card.clickable:active{background:var(--surface-soft);}
 
   .empty-state{
     text-align:center;
@@ -375,18 +410,28 @@
   }
 
   .receipt-card{
-    padding:13px;
-    border-radius:13px;
-    background:var(--surface-soft);
-    border:1px solid var(--divider);
-    margin-bottom:10px;
+    padding:20px;
+    border-radius:22px;
+    background:var(--card);
+    border:1px solid var(--border2);
+    margin-bottom:14px;
+    box-shadow:0 1px 2px rgba(21,40,59,0.04);
     transition:background .15s;
   }
-  .top-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
-  .receipt-no{font-weight:800;font-size:16px;color:var(--green-deep);}
-  .cust{font-size:12.5px;color:var(--muted);}
-  .card-meta-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin:6px 0 0;}
-  .item-summary{font-size:12.5px;color:var(--ink);line-height:1.6;margin-top:8px;padding:9px 10px;background:var(--blue-soft);border-radius:10px;}
+  .top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:4px;}
+  .receipt-no{font-weight:700;font-size:18px;color:var(--teal2);}
+  .receipt-head-meta{display:flex;flex-direction:column;gap:4px;margin-top:6px;}
+  .receipt-head-meta .cust{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink);font-weight:600;}
+  .receipt-head-meta .cust-date{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text2);}
+  .receipt-head-meta svg{flex-shrink:0;}
+  .card-meta-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;margin:10px 0 0;}
+  .item-summary{
+    font-size:13px;color:var(--ink);line-height:1.7;margin-top:12px;
+    padding:14px 16px;background:var(--blue2-soft);border:1px solid var(--blue2-border);border-radius:14px;
+    display:flex;align-items:flex-start;gap:10px;
+  }
+  .item-summary > div{flex:1;min-width:0;}
+  .item-summary b{font-weight:600;}
 
   .tabs{display:flex;gap:3px;margin-bottom:14px;background:#EAF2F5;border-radius:12px;padding:3px;}
   .tab-btn{
@@ -415,16 +460,67 @@
   }
   .summary-cell:active{transform:scale(0.97);}
   .summary-cell .num{font-size:23px;font-weight:800;line-height:1.2;}
-  .summary-cell .lbl{font-size:11.5px;color:var(--muted);margin-top:2px;}
-  .summary-cell.done{background:var(--green-soft);}
-  .summary-cell.done .num{color:var(--green-deep);}
-  .summary-cell.none{background:var(--amber-soft);}
-  .summary-cell.none .num{color:var(--amber);}
-  .summary-cell.partial{background:var(--red-soft);}
-  .summary-cell.partial .num{color:var(--red);}
+  .summary-cell .lbl{font-size:11.5px;color:var(--text2);margin-top:2px;}
+  .summary-cell.done{background:var(--teal2-soft);}
+  .summary-cell.done .num{color:var(--teal2);}
+  .summary-cell.none{background:var(--warn2-bg);}
+  .summary-cell.none .num{color:var(--warn2-text);}
+  .summary-cell.partial{background:var(--danger2-bg);}
+  .summary-cell.partial .num{color:var(--danger2-text);}
   .summary-cell.overdue{background:#3A1414;}
   .summary-cell.overdue .num, .summary-cell.overdue .lbl{color:#FF8A80;}
   .summary-cell.active{border-color:currentColor;}
+
+  .btn-refresh{
+    width:100%;min-height:54px;border-radius:18px;
+    background:#fff;border:1.5px solid var(--teal2);color:var(--teal2);
+    font-weight:600;font-size:14.5px;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    cursor:pointer;
+  }
+  .btn-refresh:active{background:var(--teal2-soft);}
+
+  .history-card{
+    background:#fff;border:1px solid var(--border2);border-radius:14px;
+    padding:14px 16px;margin-bottom:10px;
+  }
+  .history-badge{
+    display:inline-block;font-size:11.5px;font-weight:700;
+    padding:3px 10px;border-radius:999px;
+    background:var(--teal2-soft);color:var(--teal2);
+  }
+  .history-time{font-size:12px;color:var(--text2);}
+  .history-qty{font-size:13.5px;padding:2px 0;}
+  .history-qty b{color:var(--teal2);font-weight:700;}
+  .history-by{font-size:12px;color:var(--text2);word-break:break-word;}
+  .history-delete-btn{
+    background:none;border:none;color:var(--danger2-text);
+    font-size:11.5px;font-weight:700;cursor:pointer;padding:0;
+    display:inline-flex;align-items:center;gap:4px;font-family:inherit;
+  }
+
+  .sales-record-card{
+    background:#fff;border:1px solid var(--border2);border-radius:14px;
+    padding:14px 16px;margin-bottom:10px;
+    display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;
+  }
+  .sales-record-icon{
+    width:34px;height:34px;border-radius:10px;flex-shrink:0;
+    background:var(--teal2-soft);color:var(--teal2);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .sales-record-body{flex:1;min-width:180px;}
+  .sales-record-title{font-size:13.5px;font-weight:700;color:var(--ink);}
+  .sales-record-by{font-size:12px;color:var(--text2);margin-top:4px;word-break:break-word;}
+  .sales-record-time{font-size:12px;color:var(--text2);margin-left:auto;white-space:nowrap;}
+
+  .btn-delete-receipt{
+    width:100%;min-height:54px;
+    background:var(--danger2-bg);border:1px solid var(--danger2-border);color:var(--danger2-text);
+    border-radius:14px;font-weight:600;font-size:14.5px;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    margin-top:22px;
+  }
 
   /* ══════════ Desktop / wide-screen layout ══════════ */
   @media (min-width: 860px){
@@ -721,7 +817,10 @@
   </div>
 
   <div class="card">
-    <button class="btn btn-outline" style="width:100%;" onclick="loadReceipts()">รีเฟรชข้อมูล</button>
+    <button class="btn-refresh" onclick="loadReceipts()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg>
+      <span>รีเฟรชข้อมูล</span>
+    </button>
   </div>
 
   <div id="listArea"></div>
@@ -1657,6 +1756,17 @@ window.saveToDatabase = async function(){
 
 
 // ══════════════════════════ สถานะการปล่อย ══════════════════════════
+
+// ไอคอนเส้นบาง (inline SVG) ใช้ตกแต่งหน้าสถานะการปล่อย/รายละเอียดใบเสร็จ — ไม่มีผลต่อข้อมูลหรือ logic
+const ICON_PERSON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>`;
+const ICON_CALENDAR = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>`;
+const ICON_ID = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="12" r="1.8"/><path d="M13 10h5M13 14h5"/></svg>`;
+const ICON_TAG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12.5 12 21l-9-9V4a1 1 0 0 1 1-1h8z"/><circle cx="7.5" cy="7.5" r="1.2" fill="currentColor" stroke="none"/></svg>`;
+const ICON_CLOCK = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`;
+const ICON_BOX = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>`;
+const ICON_DOC = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h6l4 4v14H8z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg>`;
+const ICON_TRASH = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/></svg>`;
+
 function modeLabel(m){
   return {
     b2b_pickup: "B2B · ลูกค้ามารับสินค้า",
@@ -1832,13 +1942,13 @@ function renderDetailPanel(d){
     const isDone = remaining <= 0;
     const tapToRelease = isDone ? `` : ` onclick="event.stopPropagation(); goReleaseThisItem('${d.receiptNo}','${d.mode}')" style="cursor:pointer;"`;
     return `<div class="item-row ${isDone?'done':'pending'}"${tapToRelease}>
-      <div class="item-name">${it.name || "-"}</div>
+      <div class="item-name">${ICON_BOX}<span>${it.name || "-"}</span></div>
       <div class="item-stats">
-        <span>สั่ง: <b>${it.orderedQty||0} ${it.unit||""}</b></span>
-        <span>ปล่อยแล้ว: <b>${it.deliveredQty||0} ${it.unit||""}</b></span>
-        <span>คงเหลือ: <b>${remaining} ${it.unit||""}</b></span>
+        <span>สั่ง: <b class="stat-order">${it.orderedQty||0} ${it.unit||""}</b></span><span class="stat-sep">|</span>
+        <span>ปล่อยแล้ว: <b class="stat-delivered">${it.deliveredQty||0} ${it.unit||""}</b></span><span class="stat-sep">|</span>
+        <span>คงเหลือ: <b class="stat-remaining">${remaining} ${it.unit||""}</b></span>
       </div>
-      ${isDone ? `` : `<div class="days-hint" style="margin-top:6px;">แตะเพื่อไปกรอกยอดปล่อย →</div>`}
+      ${isDone ? `` : `<div class="release-tap-link">แตะเพื่อไปกรอกยอดปล่อย →</div>`}
     </div>`;
   }).join("");
 
@@ -1853,39 +1963,54 @@ function renderDetailPanel(d){
       return { ...h, _round: isSaleEntry ? null : round, _index: i };
     });
     const releaseRounds = numbered.filter(h=>h._round !== null).length;
-    historyHtml = `<p class="section-title" style="margin-top:14px;">ประวัติการปล่อย (${releaseRounds} รอบ)</p>` +
+    historyHtml = `<p class="section-title" style="margin-top:26px;margin-bottom:12px;color:var(--teal2);">ประวัติการปล่อย (${releaseRounds} รอบ)</p>` +
       numbered.slice().reverse().map(h=>{
         const dt = new Date(h.date);
         const dateStr = dt.toLocaleDateString("th-TH",{day:"2-digit",month:"2-digit",year:"2-digit"}) + " " + dt.toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"});
         const deliveredItems = (h.deliveredNow||[]).filter(x=>x.qty>0);
         const itemListHtml = deliveredItems.length
-          ? deliveredItems.map(x=>`<div style="font-size:13.5px;padding:2px 0;">• ${x.name}: <b>${x.qty}</b></div>`).join("")
-          : `<div style="font-size:13.5px;color:var(--muted);">${h.note || "-"}</div>`;
-        const roundLabel = h._round !== null ? `รอบที่ ${h._round}` : "บันทึกยอดขาย";
-        return `<div style="padding:9px 0;border-bottom:1px dashed var(--line-dot);">
-          <div class="top-row" style="margin-bottom:3px;">
-            <span style="font-size:12.5px;font-weight:700;color:var(--green-deep);">${roundLabel}</span>
-            <span class="days-hint">${dateStr}</span>
+          ? deliveredItems.map(x=>`<div class="history-qty">• ${x.name}: <b>${x.qty}</b></div>`).join("")
+          : `<div style="font-size:13.5px;color:var(--text2);">${h.note || "-"}</div>`;
+
+        if(h._round === null){
+          // บันทึกยอดขาย — แสดงเป็น card เอกสารแยกจากรอบปล่อยสินค้า
+          return `<div class="sales-record-card">
+            <span class="sales-record-icon">${ICON_DOC}</span>
+            <div class="sales-record-body">
+              <div class="sales-record-title">บันทึกยอดขาย</div>
+              ${itemListHtml}
+              <div class="sales-record-by">โดย ${h.by||"-"}</div>
+            </div>
+            <div class="sales-record-time">${dateStr}</div>
+          </div>`;
+        }
+
+        return `<div class="history-card">
+          <div class="top-row" style="margin-bottom:6px;">
+            <span class="history-badge">รอบที่ ${h._round}</span>
+            <span class="history-time">${dateStr}</span>
           </div>
           ${itemListHtml}
-          <div class="top-row" style="margin-top:3px;">
-            <span class="days-hint">โดย ${h.by||"-"}</span>
-            ${h._round !== null ? `<button onclick="event.stopPropagation(); deleteHistoryRound('${d.id}', ${h._index})" style="background:none;border:none;color:var(--red);font-size:11.5px;font-weight:700;cursor:pointer;padding:0;">ลบรอบนี้</button>` : ``}
+          <div class="top-row" style="margin-top:8px;">
+            <span class="history-by">โดย ${h.by||"-"}</span>
+            <button class="history-delete-btn" onclick="event.stopPropagation(); deleteHistoryRound('${d.id}', ${h._index})">${ICON_TRASH}<span>ลบรอบนี้</span></button>
           </div>
-          ${h._round !== null ? `<p id="deleteRoundStatus_${d.id}_${h._index}" style="font-size:11px;margin:3px 0 0;"></p>` : ``}
+          <p id="deleteRoundStatus_${d.id}_${h._index}" style="font-size:11px;margin:3px 0 0;"></p>
         </div>`;
       }).join("");
   }
 
-  return `<div style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--line-dot);">
-    <div class="meta-row"><span>เลขที่สมาชิก</span><span>${d.memberNo || "-"}</span></div>
-    <div class="meta-row"><span>ประเภท</span><span>${modeLabel(d.mode)}</span></div>
-    <div class="meta-row"><span>บันทึกขายเมื่อ</span><span>${fmtDate(d.createdAt)}</span></div>
-    <div class="meta-row"><span>อัปเดตล่าสุด</span><span>${fmtDate(d.updatedAt)}</span></div>
-    <p class="section-title" style="margin-top:14px;">รายการสินค้า</p>
+  return `<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--divider);">
+    <div class="info-grid">
+      <div class="info-item"><span class="info-icon">${ICON_ID}</span><div class="info-body"><div class="info-label">เลขที่สมาชิก</div><div class="info-value">${d.memberNo || "-"}</div></div></div>
+      <div class="info-item"><span class="info-icon">${ICON_TAG}</span><div class="info-body"><div class="info-label">ประเภท</div><div class="info-value">${modeLabel(d.mode)}</div></div></div>
+      <div class="info-item"><span class="info-icon">${ICON_CLOCK}</span><div class="info-body"><div class="info-label">บันทึกขายเมื่อ</div><div class="info-value">${fmtDate(d.createdAt)}</div></div></div>
+      <div class="info-item"><span class="info-icon">${ICON_CLOCK}</span><div class="info-body"><div class="info-label">อัปเดตล่าสุด</div><div class="info-value">${fmtDate(d.updatedAt)}</div></div></div>
+    </div>
+    <p class="section-title" style="margin-top:26px;margin-bottom:12px;color:var(--teal2);">รายการสินค้า</p>
     ${itemRows}
     ${historyHtml}
-    <button class="btn" style="width:100%;margin-top:14px;background:var(--red-soft);color:var(--red);" onclick="event.stopPropagation(); deleteReceiptCard('${d.id}')">ลบใบเสร็จนี้ออกจากฐานข้อมูล</button>
+    <button class="btn btn-delete-receipt" onclick="event.stopPropagation(); deleteReceiptCard('${d.id}')">${ICON_TRASH}<span>ลบใบเสร็จนี้ออกจากฐานข้อมูล</span></button>
     <p id="deleteStatus_${d.id}" style="font-size:12px;color:var(--muted);margin:8px 0 0;"></p>
   </div>`;
 }
@@ -1901,7 +2026,7 @@ function renderList(){
   }
   listEl.innerHTML = filtered.map(d=>{
     const itemLines = (d.items||[]).map(it=>
-      `${it.name}: ${it.deliveredQty||0}/${it.orderedQty||0} ${it.unit}`
+      `${it.name}: <b>${it.deliveredQty||0}/${it.orderedQty||0}</b> ${it.unit}`
     ).join(" · ");
     const saleDateStr = fmtDateOnly(d.createdAt);
     const overdueBadge = d._overdue
@@ -1910,15 +2035,17 @@ function renderList(){
     const isExpanded = expandedReceiptId === d.id;
     return `<div class="receipt-card clickable ${d._overdue ? 'is-overdue' : ''}" onclick="toggleReceiptDetail('${d.id}')">
       <div class="top-row">
-        <span class="receipt-no">${d.receiptNo}</span>
+        <div>
+          <div class="receipt-no">${d.receiptNo}</div>
+          <div class="receipt-head-meta">
+            <div class="cust">${ICON_PERSON}<span>${d.custName || modeLabel(d.mode)}</span></div>
+            <div class="cust-date">${ICON_CALENDAR}<span>ขายเมื่อ ${saleDateStr}</span></div>
+          </div>
+        </div>
         <span class="status-pill ${d._status}">${statusLabel(d._status)}</span>
       </div>
-      <div class="cust">${d.custName || modeLabel(d.mode)}</div>
-      <div class="card-meta-row">
-        <span class="days-hint">ขายเมื่อ ${saleDateStr}</span>
-        ${overdueBadge}
-      </div>
-      <div class="item-summary">${itemLines}</div>
+      ${overdueBadge ? `<div class="card-meta-row">${overdueBadge}</div>` : ``}
+      <div class="item-summary"><span class="info-icon">${ICON_BOX}</span><div>${itemLines}</div></div>
       ${isExpanded ? renderDetailPanel(d) : ``}
     </div>`;
   }).join("");
